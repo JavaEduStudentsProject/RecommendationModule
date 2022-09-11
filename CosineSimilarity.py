@@ -4,6 +4,7 @@ import copy
 
 
 class CosineSimilarity:
+
     def __init__(self, current_user, file_name):
         self.current_user = current_user
         self.file_name = file_name
@@ -35,6 +36,8 @@ class CosineSimilarity:
         """
         with open(self.file_name, "r", encoding='utf-8') as f:
             data = csv.reader(f)
+            print("test")
+            print(data)
             ratings = dict()
 
             for line in data:
@@ -70,8 +73,6 @@ class CosineSimilarity:
         dict_without_current_user = copy.deepcopy(self.ratings_from_all_users)
         dict_without_current_user.pop(self.current_user)
         return dict_without_current_user
-
-
 
     @staticmethod
     def dist_cosine(vector_one: dict, vector_two: dict) -> float:
