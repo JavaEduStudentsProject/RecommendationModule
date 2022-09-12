@@ -1,0 +1,10 @@
+{
+"id":1,
+"products":
+[
+{"id":59,"title":"Spring and summershoes","price":20,"quantity":3,"total":60,"discountPercentage":8.71,"discountedPrice":55},
+{"id":10,"title":"HP Pavilion 15-DK1056WM","price":1099,"quantity":3,"total":3297,"discountPercentage":6.18,"discountedPrice":3093}
+{"id":16,"title":"Hyaluronic Acid Serum","price":19,"quantity":1,"total":19,"discountPercentage":13.31,"discountedPrice":16},
+{"id":54,"title":"Pubg Printed Graphic T-Shirt","price":46,"quantity":3,"total":138,"discountPercentage":16.44,"discountedPrice":115}
+],
+},

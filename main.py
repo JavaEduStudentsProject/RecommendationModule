@@ -3,12 +3,13 @@ import json
 from pandas.io.json import json_normalize
 
 from CosineSimilarity import CosineSimilarity
+from LiftSort import LiftSort
 
 if __name__ == '__main__':
 
     # CURRENT_USER = 'ivan'
     # FILE_NAME = "C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\venv\\data.csv"
-    user_ivan_comparison = CosineSimilarity('ivan', "C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\venv\\data.csv")
+    user_ivan_comparison = CosineSimilarity('ivan', "C:\\Users\\danpr\\PycharmProjects\\recommendation_module\\venv\\data.csv")
 
     empty_matrix = user_ivan_comparison.empty_matrix_creating()
     user_ivan_comparison.print_matrix(empty_matrix)
@@ -22,7 +23,7 @@ if __name__ == '__main__':
     user_ivan_comparison.define_recommended_product(weight_list)
 
 
-    with open("C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\orders.txt", "r", encoding='utf-8') as f:
+    with open("orders.txt", "r", encoding='utf-8') as f:
         data = json.load(f)
         data = json_normalize(data)
         df = pd.DataFrame(data)
