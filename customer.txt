@@ -1,10 +1,17 @@
+[
 {
 "id":1,
 "products":
 [
-{"id":59,"title":"Spring and summershoes","price":20,"quantity":3,"total":60,"discountPercentage":8.71,"discountedPrice":55},
-{"id":10,"title":"HP Pavilion 15-DK1056WM","price":1099,"quantity":3,"total":3297,"discountPercentage":6.18,"discountedPrice":3093}
-{"id":16,"title":"Hyaluronic Acid Serum","price":19,"quantity":1,"total":19,"discountPercentage":13.31,"discountedPrice":16},
-{"id":54,"title":"Pubg Printed Graphic T-Shirt","price":46,"quantity":3,"total":138,"discountPercentage":16.44,"discountedPrice":115}
+{"id":18,"title":"Oil Free Moisturizer 100ml","price":40,"quantity":2,"total":80,"discountPercentage":13.1,"discountedPrice":70},
+{"id":29,"title":"Handcraft Chinese style","price":60,"quantity":1,"total":60,"discountPercentage":15.34,"discountedPrice":51},
+{"id":9,"title":"Infinix INBOOK","price":1099,"quantity":1,"total":1099,"discountPercentage":11.83,"discountedPrice":969},
+{"id":46,"title":"women's shoes","price":40,"quantity":2,"total":80,"discountPercentage":16.96,"discountedPrice":66}
 ],
-},
+"total":315,
+"discountedTotal":279,
+"userId":75,
+"totalProducts":5,
+"totalQuantity":8
+}
+]
