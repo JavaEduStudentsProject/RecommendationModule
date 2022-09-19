@@ -1,6 +1,9 @@
 import csv
+import json
 import math
 import copy
+
+from pandas.io.json import json_normalize
 
 
 class CosineSimilarity:
@@ -34,22 +37,28 @@ class CosineSimilarity:
         CSV-file parsing
         :return: dictionary with users with dictionaries {product: rating}
         """
-        with open(self.file_name, "r", encoding='utf-8') as f:
-            data = csv.reader(f)
-            print("test")
-            print(data)
-            ratings = dict()
+        ratings = eval(self.file_name())
+        print(f"ratings: {ratings}")
+        # with open(self.file_name, "r", encoding='utf-8') as f:
+        #     # string = f.read()
+        #     # print(f"string: {string}")
+        #     ratings = json.loads(f)
+        #     print(f"ratings: {ratings}")
+            # data = csv.reader(f)
+            # print("test")
+            # print(data)
+            # ratings = dict()
+            #
+            # for line in data:
+            #     user = line[0]
+            #     product = line[1]
+            #     rate = float(line[2])
+            #     if user not in ratings:
+            #         ratings[user] = dict()
+            #
+            #     ratings[user][product] = rate
 
-            for line in data:
-                user = line[0]
-                product = line[1]
-                rate = float(line[2])
-                if user not in ratings:
-                    ratings[user] = dict()
 
-                ratings[user][product] = rate
-
-        print(ratings)
         self.anomaly_deleting(ratings)
         print(ratings)
         return ratings
@@ -174,13 +183,13 @@ class CosineSimilarity:
         for i in range(len(matrix)):
             print(f"{user_list[i]:<5}: {matrix[i]}")
 
-    @staticmethod
-    def define_recommended_product(weight_list: list) -> None:
+    def define_recommended_product(self) -> str:
         """
         Defines the product with the most weight and its number
-        :param weight_list: list of final weights for each product
-        :return: None
+        # :param weight_list: list of final weights for each product
+        :return: recommendation
         """
+        weight_list = self.get_final_weight_for_each_product(self.matrix_filling())
         max_ = 0
         product_number = None
         for index, rating in enumerate(weight_list):
@@ -189,6 +198,7 @@ class CosineSimilarity:
                 product_number = index + 1
 
         print(f"We recommend you product {product_number} with rating {max_}")
+        return f"We recommend you product {product_number} with rating {max_}"
 
     @staticmethod
     def print_matrix(matrix: list) -> None:

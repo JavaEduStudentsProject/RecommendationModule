@@ -7,7 +7,6 @@ from pandas import json_normalize
 class Request:
     def __init__(self, source: str):
         self.source = source
-        # self.source = 'https://dummyjson.com/carts'
         self.data = self.get_data_from_html()
 
     def get_data_from_html(self):
