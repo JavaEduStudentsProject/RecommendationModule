@@ -14,8 +14,8 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-def cycle_request(request):
-    print("cycle-request запущен")
+def test_request(request):
+    print("test-request запущен")
     # while True:
     result = requests.get('http://localhost:9090/purchase-data')
     print(f"result.text: {result.text}")
@@ -30,28 +30,24 @@ def cycle_request(request):
 def get_request_from_front(request, username):
     # data = request.data
     print(f"username: {username}")
-    # write_data_to_file_from_database()
-    calculation = CosineSimilarity(username, get_request_to_database)
+    calculation = CosineSimilarity(username, request_to_database)
     recommended_product = calculation.define_recommended_product()
     print(recommended_product)
     return JsonResponse(recommended_product, safe=False)
 
-def get_request_to_database():
+def request_to_database():
     data_from_database = requests.get('http://localhost:9090/data_from_database')
     print(f"data from database: {data_from_database.text}")
     return data_from_database.text
 
-def write_data_to_file_from_database():
-    data_from_database = get_request_to_database()
-    with open('file.txt', 'w', encoding='utf-8') as f:
-        f.write(data_from_database)
+
 
 
 #зацикленный запрос к базе, запускается в отдельном потоке
 def loop_func():
     count = 0
     while True:
-        get_request_to_database()
+        request_to_database()
         time.sleep(5)
         count += 1
         if count == 100:
