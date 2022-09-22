@@ -3,7 +3,7 @@ import json
 from pandas.io.json import json_normalize
 
 from CosineSimilarity import CosineSimilarity
-from LiftSort import LiftSort
+from BestProducts import BestProducts
 
 if __name__ == '__main__':
 
@@ -25,25 +25,11 @@ if __name__ == '__main__':
     #
     # LiftSort.list_of_all_products()
 
-    second_method = LiftSort()
+    best_products = BestProducts()
+    best_products.get_product_to_categories()
+    best_products.sort_and_get_final()
 
-    second_method.products_from_customer()
-    # second_method.customer_combinations()
 
-    second_method.appearance_from_orders_separated()
-    second_method.appearance_from_orders_unseparated()
-
-    # second_method.combinations_from_orders_separated()
-    second_method.combinations_from_orders_unseparated()
-
-    second_method.set_from_orders()
-
-    second_method.bilateral_combination_to_estimate()
-
-    second_method.formula()
-    second_method.finalization()
-
-    second_method.recommendations_for_user(second_method.arr_of_customer)
 
 
     # with open("orders.txt", "r", encoding='utf-8') as f:
