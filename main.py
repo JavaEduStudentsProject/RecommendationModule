@@ -28,7 +28,6 @@ if __name__ == '__main__':
     second_method = LiftSort()
 
     second_method.products_from_customer()
-    # second_method.customer_combinations()
 
     second_method.appearance_from_orders_separated()
     second_method.appearance_from_orders_unseparated()
