@@ -12,11 +12,10 @@ class LiftSort:
 
         self.arr_of_customer = []
 
-        self.arr_of_appearance_from_orders_sep = []
+        self.arr_of_appearance_from_orders = []
         self.arr_of_order_combinations = []
 
-
-        self.semi_result = []
+        self.formula_result = []
 
         self.final_map = {}
         self.arr_recommendations_for_user = []
@@ -55,43 +54,38 @@ class LiftSort:
             temp1 = []
             for j in self.df_orders["products"][i]:
                 temp1.append(j["id"])
-            self.arr_of_appearance_from_orders_sep.append(temp1)
+            self.arr_of_appearance_from_orders.append(temp1)
 
         print("arr_of_appearance_from_orders_sep:")
-        print(self.arr_of_appearance_from_orders_sep)
+        print(self.arr_of_appearance_from_orders)
 
     # Получаем все возможные комбинации товаров, которые сущствуют в заказах.
     def get_combinations_from_orders(self) -> None:
-        for i in self.arr_of_appearance_from_orders_sep:
-            print(i)
+        for i in self.arr_of_appearance_from_orders:
             for n in i:
-                print(n)
-                temp = []
-                temp.append(n)
                 for m in i:
-                    temp.append(m)
-                    self.arr_of_order_combinations.append(temp)
+                    if n != m:
+                        self.arr_of_order_combinations.append([n, m])
 
         print("arr_of_order_combinations:")
         print(self.arr_of_order_combinations)
 
+    # Применяем формулу. Перед самой формулой выбрасываем из рассмотрения те заказы, в которых встретилась
+    # рассчитываемая пара товаров
+    def use_formula(self) -> None:
+        for i in self.arr_of_order_combinations:
+            temp_cleared = []
+            for j in self.arr_of_appearance_from_orders:
+                if not (i[0] in j and
+                        i[1] in j):
+                    for n in j:
+                        temp_cleared.append(n)
 
-def formula(self) -> None:
-    for i in self.arr_of_possible_combinations:
-        temp_cleared = []
-        for j in self.arr_of_appearance_from_orders_sep:
-            if not (i[0] in j and
-                    i[1] in j):
-                for n in j:
-                    temp_cleared.append(n)
+            value = self.arr_of_order_combinations.count(i) / (0.1 +temp_cleared.count(i[0]) + temp_cleared.count(i[1]))
+            self.formula_result.append([i, value])
 
-        value = self.arr_of_order_combinations_unsep.count(i) / (0.1 +
-                                                                 temp_cleared.count(i[0]) + temp_cleared.count(
-                    i[1]))
-        self.semi_result.append([i, value])
-
-    print("semi_result")
-    print(self.semi_result)
+        print("formula_result")
+        print(self.formula_result)
 
 
 def finalization(self) -> None:
