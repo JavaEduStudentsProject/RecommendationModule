@@ -15,8 +15,7 @@ class LiftSort:
         self.arr_of_appearance_from_orders_sep = []
         self.arr_of_order_combinations = []
 
-        self.set_orders = []
-        self.arr_of_possible_combinations = []
+
         self.semi_result = []
 
         self.final_map = {}
@@ -40,9 +39,9 @@ class LiftSort:
             data = json_normalize(data)
             return pd.DataFrame(data)
 
-    # Списаок заказов пользователей
+    # Список заказов пользователей
 
-    def products_from_customer(self) -> None:
+    def get_products_from_customer(self) -> None:
         for i in self.df_customers["products"][0]:
             self.arr_of_customer.append(i["id"])
 
@@ -51,23 +50,29 @@ class LiftSort:
 
     # Данный список нужен для того, чтобы мы могли для каждой пары товаров искать по формуле знаменатель, т.к. в нем
     # число появлений товаров раздельно, то есть нам надо исключить из поиска корзины в которых 2 товара были вместе
-    def appearance_from_orders_separated(self) -> None:
-        for i in range(len(self.set_orders)):
+    def get_appearance_from_orders_separated(self) -> None:
+        for i in range(len(self.df_orders)):
             temp1 = []
-            for j in self.set_orders["products"][i]:
+            for j in self.df_orders["products"][i]:
                 temp1.append(j["id"])
             self.arr_of_appearance_from_orders_sep.append(temp1)
 
         print("arr_of_appearance_from_orders_sep:")
         print(self.arr_of_appearance_from_orders_sep)
 
-    def combinations_from_orders(self) -> None:
+    # Получаем все возможные комбинации товаров, которые сущствуют в заказах.
+    def get_combinations_from_orders(self) -> None:
         for i in self.arr_of_appearance_from_orders_sep:
-            temp1 = []
-            for j in self.arr_of_appearance_from_orders_sep:
-                i[j]
+            print(i)
+            for n in i:
+                print(n)
+                temp = []
+                temp.append(n)
+                for m in i:
+                    temp.append(m)
+                    self.arr_of_order_combinations.append(temp)
 
-        print("arr_of_order_combinations_unsep:")
+        print("arr_of_order_combinations:")
         print(self.arr_of_order_combinations)
 
 

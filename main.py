@@ -27,22 +27,24 @@ if __name__ == '__main__':
 
     second_method = LiftSort()
 
-    second_method.products_from_customer()
+    second_method.get_products_from_customer()
 
-    second_method.appearance_from_orders_separated()
-    second_method.appearance_from_orders_unseparated()
+    second_method.get_appearance_from_orders_separated()
+    second_method.get_combinations_from_orders()
+
+    # second_method.appearance_from_orders_unseparated()
 
     # second_method.combinations_from_orders_separated()
-    second_method.combinations_from_orders_unseparated()
-
-    second_method.set_from_orders()
-
-    second_method.bilateral_combination_to_estimate()
-
-    second_method.formula()
-    second_method.finalization()
-
-    second_method.recommendations_for_user(second_method.arr_of_customer)
+    # second_method.combinations_from_orders_unseparated()
+    #
+    # second_method.set_from_orders()
+    #
+    # second_method.bilateral_combination_to_estimate()
+    #
+    # second_method.formula()
+    # second_method.finalization()
+    #
+    # second_method.recommendations_for_user(second_method.arr_of_customer)
 
 
     # with open("orders.txt", "r", encoding='utf-8') as f:
