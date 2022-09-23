@@ -11,12 +11,9 @@ class LiftSort:
         self.df_orders = self.data_frame_orders()
 
         self.arr_of_customer = []
-
         self.arr_of_appearance_from_orders = []
         self.arr_of_order_combinations = []
-
         self.formula_result = []
-
         self.final_map = {}
         self.arr_recommendations_for_user = []
 
@@ -81,43 +78,34 @@ class LiftSort:
                     for n in j:
                         temp_cleared.append(n)
 
+    # 0,1 доблены в сумму что б не получалось деления на 0
+
             value = self.arr_of_order_combinations.count(i) / (0.1 +temp_cleared.count(i[0]) + temp_cleared.count(i[1]))
             self.formula_result.append([i, value])
 
         print("formula_result")
         print(self.formula_result)
 
+    # Сравниваем полученные из формулы веса и оставляем только одну пару для каждого товара, получая финальный словарь
+    def finalization(self) -> None:
+        for i in self.formula_result:
+            temp_array = i
+            for j in self.formula_result:
+                if i != j:
+                    if i[0][0] == j[0][0]:
+                        if temp_array[1] < j[1]:
+                            temp_array = j
+            self.final_map[temp_array[0][0]] = temp_array[0][1]
 
-def finalization(self) -> None:
-    for i in self.semi_result:
-        temp_array = i
-        for j in self.semi_result:
-            if i != j:
-                if i[0][0] == j[0][0]:
-                    if temp_array[1] < j[1]:
-                        temp_array = j
-        self.final_map[temp_array[0][0]] = temp_array[0][1]
+        print("final_map:")
+        print(self.final_map)
+        print("sorted_map")
+        print(sorted(self.final_map.items()))
 
-    print("final_map:")
-    print(self.final_map)
-    print("sorted_map")
-    print(sorted(self.final_map.items()))
+    # Метод принимает заказы пользователя и возварщает рекомендованные товары
+    def get_recommendations_for_user(self, basket: list) -> list:
+        for i in basket:
+            self.arr_recommendations_for_user.append(self.final_map.get(i))
+        print("SPECIAL FOR YOU!!!")
+        print(self.arr_recommendations_for_user)
 
-
-def recommendations_for_user(self, basket: list) -> list:
-    for i in basket:
-        self.arr_recommendations_for_user.append(self.final_map.get(i))
-    print("SPECIAL FOR YOU!!!")
-    print(self.arr_recommendations_for_user)
-
-# print(df["products"])
-# print(df["products"][0])
-#
-# print(df["id"])
-# print(df["id"][0])
-#
-# list_ = []
-# for i in df["products"][0]:
-#     print(i['id'])
-#     list_.append(i['id'])
-#     print(list_)

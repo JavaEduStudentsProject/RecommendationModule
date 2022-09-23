@@ -32,7 +32,8 @@ if __name__ == '__main__':
     second_method.get_appearance_from_orders_separated()
     second_method.get_combinations_from_orders()
     second_method.use_formula()
-
+    second_method.finalization()
+    second_method.get_recommendations_for_user(second_method.arr_of_customer)
 
 
 
