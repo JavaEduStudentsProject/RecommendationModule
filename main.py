@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     basket_sort = BasketSort()
 
-    basket_sort.get_pairs_from_orders()
+    basket_sort.get_arr_of_order_combinations()
     basket_sort.get_product_to_categories()
     basket_sort.appearance_from_orders_separated()
 
