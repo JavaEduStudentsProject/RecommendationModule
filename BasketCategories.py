@@ -49,6 +49,7 @@ class BasketSort:
         print("pairs_from_orders:")
         print(self.arr_of_order_combinations)
 
+
     # Получаем словарь, где ключ это id товара, значение словарь с названиями категорий и количством товаров
     # этой категории
     def get_product_to_categories(self) -> None:
@@ -65,38 +66,39 @@ class BasketSort:
         print("product_to_categories")
         print(self.product_to_categories)
 
-    # Для применения формулы требуется количество появлений категории (товара) отдельно от другого. То есть при
-    # расчете знаменателя итоговой формулы нам нужно проходить не просто по спику заказов, а списку, из которого удлены
-    # заказы, содержащие рассматриваемую комбинацию товаров. Для этого нужен этот промежуточный массив
-    def appearance_from_orders_separated(self) -> None:
-        for i in range(len(self.df_orders)):
-            temp1 = []
-            for j in self.df_orders["products"][i]:
-                temp1.append(j["id"])
-            self.arr_of_appearance_from_orders_sep.append(temp1)
 
-        print("arr_of_appearance_from_orders_sep:")
-        print(self.arr_of_appearance_from_orders_sep)
-
-    # Применяем формулу. Перед самой формулой выбрасываем из рассмотрения те заказы, в которых встретилась
-    # рассчитываемая пара товаров
-    def use_formula(self) -> None:
-        for i in self.arr_of_order_combinations:
-            temp_cleared = []
-            for j in self.arr_of_appearance_from_orders:
-                if not (i[0] in j and
-                        i[1] in j):
-                    for n in j:
-                        temp_cleared.append(n)
-
-            # 0,1 доблены в сумму что б не получалось деления на 0
-
-            value = self.arr_of_order_combinations.count(i) / (
-                        0.1 + temp_cleared.count(i[0]) + temp_cleared.count(i[1]))
-            self.formula_result.append([i, value])
-
-        print("formula_result")
-        print(self.formula_result)
+    # # Для применения формулы требуется количество появлений категории (товара) отдельно от другого. То есть при
+    # # расчете знаменателя итоговой формулы нам нужно проходить не просто по спику заказов, а списку, из которого удлены
+    # # заказы, содержащие рассматриваемую комбинацию товаров. Для этого нужен этот промежуточный массив
+    # def appearance_from_orders_separated(self) -> None:
+    #     for i in range(len(self.df_orders)):
+    #         temp1 = []
+    #         for j in self.df_orders["products"][i]:
+    #             temp1.append(j["id"])
+    #         self.arr_of_appearance_from_orders_sep.append(temp1)
+    #
+    #     print("arr_of_appearance_from_orders_sep:")
+    #     print(self.arr_of_appearance_from_orders_sep)
+    #
+    # # Применяем формулу. Перед самой формулой выбрасываем из рассмотрения те заказы, в которых встретилась
+    # # рассчитываемая пара товаров
+    # def use_formula(self) -> None:
+    #     for i in self.arr_of_order_combinations:
+    #         temp_cleared = []
+    #         for j in self.arr_of_appearance_from_orders:
+    #             if not (i[0] in j and
+    #                     i[1] in j):
+    #                 for n in j:
+    #                     temp_cleared.append(n)
+    #
+    #         # 0,1 доблены в сумму что б не получалось деления на 0
+    #
+    #         value = self.arr_of_order_combinations.count(i) / (
+    #                     0.1 + temp_cleared.count(i[0]) + temp_cleared.count(i[1]))
+    #         self.formula_result.append([i, value])
+    #
+    #     print("formula_result")
+    #     print(self.formula_result)
 
         # # Сравниваем полученные из формулы веса и оставляем только одну пару для каждого товара, получая финальный словарь
         # def finalization(self) -> None:
