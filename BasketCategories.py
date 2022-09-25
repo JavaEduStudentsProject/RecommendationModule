@@ -14,11 +14,12 @@ class BasketSort:
         self.arr_of_order_combinations = []
         self.product_to_categories = {}
         self.possible_combinations = []
-
         self.arr_of_appearance_from_orders = []
+        self.formula_result = []
+        self.final_map = {}
+
         self.product_from_customer = []
 
-        self.arr_of_order_combinations_category = []
 
 
 
@@ -42,7 +43,6 @@ class BasketSort:
 
     # Получаю все возможные комбинции из заказов причем двусторонние, т.е. [59, 88] и [88, 59] для удобной фильтрации
     # в методе получения словаря
-    # Одновременно с эти получаем массив пар id - категория для подсчета знаменатля формулы
     def get_arr_of_order_combinations(self) -> None:
         for i in range(len(self.df_orders)):
             temp1 = []
@@ -52,11 +52,9 @@ class BasketSort:
                 for m in temp1:
                     if m != n:
                         self.arr_of_order_combinations.append([n, m])
-                        self.arr_of_order_combinations_category.append([n, self.df_products["category"][m - 1]])
         print("pairs_from_orders:")
         print(self.arr_of_order_combinations)
-        print("pairs_from_orders_category:")
-        print(self.arr_of_order_combinations_category)
+
 
     # Получаем словарь, где ключ это id товара, значение словарь с названиями категорий и количством товаров
     # этой категории
@@ -73,6 +71,7 @@ class BasketSort:
 
         print("product_to_categories")
         print(self.product_to_categories)
+        print(self.product_to_categories[2])
 
     # Из предыдущего словаря получаем список всех возможных комбинаций, встречающихся в заказах
     # который и будем прогонять через формулу
@@ -93,44 +92,47 @@ class BasketSort:
                 temp1.append(j["id"])
             self.arr_of_appearance_from_orders.append(temp1)
 
-        print("arr_of_appearance_from_orders_sep:")
+        print("arr_of_appearance_from_orders:")
         print(self.arr_of_appearance_from_orders)
 
     # Применяем формулу. Перед самой формулой выбрасываем из рассмотрения те заказы, в которых встретилась
     # рассчитываемая пара товаров
     def use_formula(self) -> None:
-        for i in self.arr_of_order_combinations:
-            temp_cleared = []
+        for i in self.possible_combinations:
+            temp_cleared_id = []
+            temp_cleared_category = []
             for j in self.arr_of_appearance_from_orders:
+                temp = []
+                for m in j:
+                    temp.append(self.df_products["category"][m - 1])
                 if not (i[0] in j and
-                        i[1] in j):
+                        i[1] in temp):
                     for n in j:
-                        temp_cleared.append(n)
+                        temp_cleared_id.append(n)
+                        temp_cleared_category.append(self.df_products["category"][n - 1])
 
             # 0,1 доблены в сумму что б не получалось деления на 0
-
-            value = self.arr_of_order_combinations.count(i) / (
-                        0.1 + temp_cleared.count(i[0]) + temp_cleared.count(i[1]))
+            value = self.product_to_categories[i[0]][i[1]] /(0.1 + temp_cleared_id.count(i[0]) + temp_cleared_category.count(i[1]))
             self.formula_result.append([i, value])
 
         print("formula_result")
         print(self.formula_result)
 
-        # # Сравниваем полученные из формулы веса и оставляем только одну пару для каждого товара, получая финальный словарь
-        # def finalization(self) -> None:
-        #     for i in self.formula_result:
-        #         temp_array = i
-        #         for j in self.formula_result:
-        #             if i != j:
-        #                 if i[0][0] == j[0][0]:
-        #                     if temp_array[1] < j[1]:
-        #                         temp_array = j
-        #         self.final_map[temp_array[0][0]] = temp_array[0][1]
-        #
-        #     print("final_map:")
-        #     print(self.final_map)
-        #     print("sorted_map")
-        #     print(sorted(self.final_map.items()))
+    # Сравниваем полученные из формулы веса и оставляем только одну пару для каждого товара, получая финальный словарь
+    def finalization(self) -> None:
+        for i in self.formula_result:
+            temp_array = i
+            for j in self.formula_result:
+                if i != j:
+                    if i[0][0] == j[0][0]:
+                        if temp_array[1] < j[1]:
+                            temp_array = j
+            self.final_map[temp_array[0][0]] = temp_array[0][1]
+
+        print("final_map:")
+        print(self.final_map)
+        print("sorted_map")
+        print(sorted(self.final_map.items()))
         #
         # # Метод принимает заказы пользователя и возварщает рекомендованные товары
         # def get_recommendations_for_user(self, basket: list) -> list:

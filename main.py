@@ -31,6 +31,8 @@ if __name__ == '__main__':
     basket_sort.get_product_to_categories()
     basket_sort.get_possible_combinations()
     basket_sort.get_appearance_from_orders_separated()
+    basket_sort.use_formula()
+    basket_sort.finalization()
 
 
 
