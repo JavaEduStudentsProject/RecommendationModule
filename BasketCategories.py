@@ -19,10 +19,7 @@ class BasketSort:
         self.final_map = {}
         self.arr_recommendations_for_user = []
 
-        self.product_from_customer = []
-
-
-
+        self.arr_of_customer = []
 
     def data_frame_products(self):
         with open("products.txt", "r", encoding='utf-8') as f:
@@ -41,6 +38,14 @@ class BasketSort:
             data = json.load(f)
             data = json_normalize(data)
             return pd.DataFrame(data)
+
+     # Список заказов пользователей
+    def get_products_from_customer(self) -> None:
+        for i in self.df_customers["products"][0]:
+            self.arr_of_customer.append(i["id"])
+
+        print("arr_of_customer:")
+        print(self.arr_of_customer)
 
     # Получаю все возможные комбинции из заказов причем двусторонние, т.е. [59, 88] и [88, 59] для удобной фильтрации
     # в методе получения словаря

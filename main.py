@@ -25,16 +25,17 @@ if __name__ == '__main__':
     #
     # LiftSort.list_of_all_products()
 
-    basket_sort = BasketSort()
+    basket_recommend = BasketSort()
 
-    basket_sort.get_arr_of_order_combinations()
-    basket_sort.get_product_to_categories()
-    basket_sort.get_possible_combinations()
-    basket_sort.get_appearance_from_orders_separated()
-    basket_sort.use_formula()
-    basket_sort.finalization()
+    basket_recommend.get_arr_of_order_combinations()
+    basket_recommend.get_product_to_categories()
+    basket_recommend.get_possible_combinations()
+    basket_recommend.get_appearance_from_orders_separated()
+    basket_recommend.use_formula()
+    basket_recommend.finalization()
 
-    basket_sort.get_recommendations_for_user()
+    basket_recommend.get_products_from_customer()
+    basket_recommend.get_recommendations_for_user(basket_recommend.arr_of_customer)
 
 
 
