@@ -34,6 +34,8 @@ if __name__ == '__main__':
     basket_sort.use_formula()
     basket_sort.finalization()
 
+    basket_sort.get_recommendations_for_user()
+
 
 
     # with open("orders.txt", "r", encoding='utf-8') as f:

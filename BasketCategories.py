@@ -17,6 +17,7 @@ class BasketSort:
         self.arr_of_appearance_from_orders = []
         self.formula_result = []
         self.final_map = {}
+        self.arr_recommendations_for_user = []
 
         self.product_from_customer = []
 
@@ -71,7 +72,6 @@ class BasketSort:
 
         print("product_to_categories")
         print(self.product_to_categories)
-        print(self.product_to_categories[2])
 
     # Из предыдущего словаря получаем список всех возможных комбинаций, встречающихся в заказах
     # который и будем прогонять через формулу
@@ -133,10 +133,10 @@ class BasketSort:
         print(self.final_map)
         print("sorted_map")
         print(sorted(self.final_map.items()))
-        #
-        # # Метод принимает заказы пользователя и возварщает рекомендованные товары
-        # def get_recommendations_for_user(self, basket: list) -> list:
-        #     for i in basket:
-        #         self.arr_recommendations_for_user.append(self.final_map.get(i))
-        #     print("SPECIAL FOR YOU!!!")
-        #     print(self.arr_recommendations_for_user)
+
+    # Метод принимает заказы пользователя и возварщает рекомендованные товары
+    def get_recommendations_for_user(self, basket: list) -> list:
+        for i in basket:
+            self.arr_recommendations_for_user.append(self.final_map.get(i))
+        print("SPECIAL FOR YOU!!!")
+        print(self.arr_recommendations_for_user)
