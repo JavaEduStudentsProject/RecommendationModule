@@ -14,6 +14,7 @@ class BasketSort:
         self.arr_of_appearance_from_orders_sep = []
         self.product_from_customer = []
         self.arr_of_order_combinations = []
+        self.arr_of_order_combinations_category = []
         self.product_to_categories = {}
 
     def data_frame_products(self):
@@ -36,7 +37,7 @@ class BasketSort:
             return pd.DataFrame(data)
 
     # Получаю все возможные комбинции из заказов причем двусторонние, т.е. [59, 88] и [88, 59] для удобной фильтрации
-    # в следующем методе
+    # в методе получения словаря
     def get_arr_of_order_combinations(self) -> None:
         for i in range(len(self.df_orders)):
             temp1 = []
@@ -49,6 +50,18 @@ class BasketSort:
         print("pairs_from_orders:")
         print(self.arr_of_order_combinations)
 
+
+    def get_arr_of_order_combinations_category(self) -> None:
+        for i in range(len(self.df_orders)):
+            temp1 = []
+            for j in self.df_orders["products"][i]:
+                temp1.append(j["id"])
+            for n in temp1:
+                for m in temp1:
+                    if m != n:
+                        self.arr_of_order_combinations_category.append([n, self.df_products["category"][m-1]])
+        print("pairs_from_orders:")
+        print(self.arr_of_order_combinations_category)
 
     # Получаем словарь, где ключ это id товара, значение словарь с названиями категорий и количством товаров
     # этой категории
@@ -65,6 +78,10 @@ class BasketSort:
 
         print("product_to_categories")
         print(self.product_to_categories)
+
+
+
+
 
 
     # # Для применения формулы требуется количество появлений категории (товара) отдельно от другого. То есть при
