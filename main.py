@@ -29,7 +29,9 @@ if __name__ == '__main__':
 
     basket_sort.get_arr_of_order_combinations()
     basket_sort.get_product_to_categories()
-    basket_sort.get_arr_of_order_combinations_category()
+    basket_sort.get_possible_combinations()
+    basket_sort.get_appearance_from_orders_separated()
+
 
 
     # with open("orders.txt", "r", encoding='utf-8') as f:
