@@ -7,7 +7,7 @@ from Request import Request
 
 if __name__ == '__main__':
 
-    user_ivan_comparison = CosineSimilarity('ivan', "C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\venv\\data.csv")
+    user_ivan_comparison = CosineSimilarity('ivan', "C:\\Users\\Vladimir\\Python\\pythonProject\\RecommendationModule\\venv\\data.csv")
 
     empty_matrix = user_ivan_comparison.empty_matrix_creating()
     CosineSimilarity.print_matrix(empty_matrix)

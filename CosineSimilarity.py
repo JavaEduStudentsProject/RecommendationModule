@@ -8,29 +8,12 @@ from pandas.io.json import json_normalize
 
 class CosineSimilarity:
 
-    def __init__(self, current_user, file_name):
+    def __init__(self, current_user, data):
         self.current_user = current_user
-        self.file_name = file_name
+        self.data = data
 
         self.ratings_from_all_users = self.read_file()
         self.ratings_from_all_users_except_current_user = self.set_ratings_from_all_users_except_current_user()
-
-    # @property
-    # def ratings_from_all_users(self):
-    #     return self.ratings_from_all_users
-    #
-    # @ratings_from_all_users.setter
-    # def ratings_from_all_users(self):
-    #     self.ratings_from_all_users = self.read_file()
-    #
-    # @property
-    # def ratings_from_all_users_except_current_user(self):
-    #     return self.ratings_from_all_users_except_current_user
-    #
-    # @ratings_from_all_users_except_current_user.setter
-    # def ratings_from_all_users_except_current_user(self):
-    #     dict_without_current_user = self.ratings_from_all_users.pop(self.current_user)
-    #     self.ratings_from_all_users_except_current_user = dict_without_current_user
 
     def read_file(self) -> dict:
         """

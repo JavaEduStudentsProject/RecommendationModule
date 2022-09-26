@@ -29,7 +29,7 @@ class Request:
     # for line in r.text:
     #     print(line)
 
-    with open("C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\orders.txt", "r",
+    with open("C:\\Users\\Vladimir\\Python\\pythonProject\\RecommendationModule\\orders.txt", "r",
               encoding='utf-8') as f:
         data = json.load(f)
         data = json_normalize(data)

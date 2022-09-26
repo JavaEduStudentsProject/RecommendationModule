@@ -1,5 +1,5 @@
 """
-ASGI config for recommendation_module project.
+ASGI config for RecommendationModule project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
