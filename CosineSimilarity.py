@@ -8,8 +8,8 @@ from pandas.io.json import json_normalize
 
 class CosineSimilarity:
 
-    def __init__(self, current_user, data):
-        self.current_user = current_user
+    def __init__(self, current_user_id, data):
+        self.current_user_id = current_user_id
         self.data = data
 
         self.ratings_from_all_users = self.read_file()
@@ -18,10 +18,17 @@ class CosineSimilarity:
     def read_file(self) -> dict:
         """
         CSV-file parsing
-        :return: dictionary with users with dictionaries {product: rating}
+        :return: dictionary with users and sorted list of products, they have bought {user: [1, 2, 34, 56, 88]}
         """
-        ratings = eval(self.file_name())
-        print(f"ratings: {ratings}")
+        orders = eval(self.data)
+        print(f"orders: {orders}")
+        print(type(orders))
+        orders_dict = {}
+        for order in orders:
+            bought_product_list = []
+            list(map(lambda x: bought_product_list.append(x['id']), order['products']))
+            orders_dict[f"{order['userId']}"] = bought_product_list
+        print(f"orders_dict: {orders_dict}")
         # with open(self.file_name, "r", encoding='utf-8') as f:
         #     # string = f.read()
         #     # print(f"string: {string}")
@@ -42,9 +49,19 @@ class CosineSimilarity:
             #     ratings[user][product] = rate
 
 
-        self.anomaly_deleting(ratings)
-        print(ratings)
-        return ratings
+        # self.anomaly_deleting(orders)
+        # print(orders)
+
+        # for item in json.loads(orders):
+        #     print(str(item).replace("\'", "\""))
+        #     print(json.loads(str(item).replace("\'", "\"")))
+        #     print(type(json.loads(str(item).replace("\'", "\""))))
+        #     print(json.loads(str(item).replace("\'", "\""))["id"])
+            # print(json.loads(str(item)))
+            # print(type(item))
+            # print(type(json.loads(str(item))))
+
+        return orders_dict
 
     def anomaly_deleting(self, ratings: dict) -> None:
         """
@@ -63,7 +80,7 @@ class CosineSimilarity:
         :return: dict of users with dicts of their product ratings
         """
         dict_without_current_user = copy.deepcopy(self.ratings_from_all_users)
-        dict_without_current_user.pop(self.current_user)
+        dict_without_current_user.pop(self.current_user_id)
         return dict_without_current_user
 
     @staticmethod
@@ -91,7 +108,7 @@ class CosineSimilarity:
         """
         matching_factor_list = []
         for user in self.ratings_from_all_users_except_current_user:
-            matching_factor_list.append(self.dist_cosine(self.ratings_from_all_users[self.current_user],
+            matching_factor_list.append(self.dist_cosine(self.ratings_from_all_users[self.current_user_id],
                                                          self.ratings_from_all_users_except_current_user[user]))
 
         return matching_factor_list
@@ -118,7 +135,7 @@ class CosineSimilarity:
         user_list = list(self.ratings_from_all_users_except_current_user.keys())
         for i in range(len(matrix)):
             for j in range(len(matrix[i])):
-                if str(j + 1) in self.ratings_from_all_users[self.current_user].keys():
+                if str(j + 1) in self.ratings_from_all_users[self.current_user_id].keys():
                     matrix[i][j] = False
                 elif str(j + 1) in self.ratings_from_all_users_except_current_user[user_list[i]].keys():
                     matrix[i][j] = self.ratings_from_all_users_except_current_user[user_list[i]][f"{j + 1}"] * \

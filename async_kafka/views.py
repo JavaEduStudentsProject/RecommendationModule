@@ -2,6 +2,9 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 import asyncio
 import json
 
+from CosineSimilarity import CosineSimilarity
+
+
 async def send_one():
     producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
     # Get cluster layout and initial topic/partition leadership information
@@ -31,14 +34,8 @@ async def consume():
             # data = str(json.loads(data)).replace("\'", "\"")
             # print(data)
             print(type(data))
-            for item in json.loads(data):
-                print(str(item).replace("\'", "\""))
-                print(json.loads(str(item).replace("\'", "\"")))
-                print(type(json.loads(str(item).replace("\'", "\""))))
-                print(json.loads(str(item).replace("\'", "\""))["id"])
-                # print(json.loads(str(item)))
-                # print(type(item))
-                # print(type(json.loads(str(item))))
+            cs = CosineSimilarity("97", data)
+
     finally:
         # Will leave consumer group; perform autocommit if enabled.
         await consumer.stop()
