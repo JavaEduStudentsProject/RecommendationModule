@@ -1,130 +1,248 @@
-import csv
+import json
 import math
+import copy
+import numpy as np
+import pandas
+from numpy import ndarray, float64
 
 
-def read_file(file_name: str) -> dict:
-    """
-    CSV-file parsing
-    :param file_name: path to csv-file
-    :return: dictionary with users with dictionaries {product: rating}
-    """
-    with open(file_name, "r", encoding='utf-8') as f:
-        data = csv.reader(f)
+class CosineSimilarity:
 
-        ratings = dict()
+    def __init__(self, current_user_id, data):
+        self.current_user_id = current_user_id
+        self.data = data
 
-        for line in data:
-            user = line[0]
-            product = line[1]
-            rate = float(line[2])
-            if not user in ratings:
-                ratings[user] = dict()
+        self.orders_from_all_users = self.orders_dict_creating()
+        self.orders_from_all_users_except_current_user = self.set_orders_from_all_users_except_current_user()
 
-            ratings[user][product] = rate
-    # print(ratings)
-    return ratings
+    def orders_dict_creating(self) -> dict:
+        """
+        Creating of dictionary with users and products, they have bought.
+        :return: dictionary with users and sorted list of products, they have bought {user: [1, 2, 34, 56, 88]}
+        """
+        raw_orders = eval(self.data)
+        print(f"raw_orders: {raw_orders}")
+        str_orders = eval(raw_orders)
 
+        orders = json.loads(str_orders)
+        print(f"orders: {orders}")
+        print(f"orders: {type(orders)}")
 
-def distCosine(vector_one: dict, vector_two: dict) -> float:
-    """
-    Calculation of cosine similarity between two users
-    :param vecA: dictionary of first user's ratings
-    :param vecB: dictionary of second user's ratings
-    :return: coefficient of cosine similarity
-    """
-    def dotProduct(vector_one, vector_two):
-        d = 0.0
-        for dim in vector_one:
-            if dim in vector_two:
-                d += vector_one[dim] * vector_two[dim]
-        return d
+        orders_dict = {}
+        all_orders_quantity = len(orders)
+        for order in orders:
+            if f"{order['userId']}" in orders_dict:
+                for product in order['products']:
+                    if product['id'] in orders_dict[f"{order['userId']}"].keys():
+                        orders_dict[f"{order['userId']}"][product['id']][0] += product['quantity']
+                        orders_dict[f"{order['userId']}"][product['id']][1] += 1
+                    else:
+                        orders_dict[f"{order['userId']}"][product['id']] = []
+                        orders_dict[f"{order['userId']}"][product['id']].append(product['quantity'])
+                        orders_dict[f"{order['userId']}"][product['id']].append(1)
 
-    return dotProduct(vector_one, vector_two) / (math.sqrt(dotProduct(vector_one, vector_one)) * math.sqrt(dotProduct(vector_two, vector_two)))
+            else:
+                orders_dict[f"{order['userId']}"] = {}
+                for product in order['products']:
+                    orders_dict[f"{order['userId']}"][product['id']] = []
+                    orders_dict[f"{order['userId']}"][product['id']].append(product['quantity'])
+                    orders_dict[f"{order['userId']}"][product['id']].append(1)
 
+        print(f"orders_dict: {orders_dict}")
 
-def user_rating_comparison(current_user: str, file_name: str) -> list:
-    """
-    Comparsion between current user and other users
-    :param current_user: user for comparsion
-    :param file_name: path to the csv-file
-    :return: list of cosine similarities between current user and other users
-    """
-    rating_dict = read_file(file_name)
+        final_orders_dict = {}
+        for user, products in orders_dict.items():
+            final_orders_dict[user] = {}
+            for product_id, coeff_list in products.items():
+                final_orders_dict[user][product_id] = coeff_list[0] * (coeff_list[1] / all_orders_quantity)
 
-    matching_factor_list = []
-    for user in rating_dict:
-        print(user, rating_dict[user])
-        if user != current_user:
-            matching_factor_list.append(distCosine(rating_dict[current_user], rating_dict[user]))
-    print(f"matching_factor_list: {matching_factor_list}")
-    matching_factor_list.append(sum(matching_factor_list))
+        # self.anomaly_deleting(orders_dict)
 
-    return matching_factor_list
+        print(f"final_orders_dict: {final_orders_dict}")
+        return final_orders_dict
 
+    def anomaly_deleting(self, orders_dict: dict) -> None:
+        """
+        Deletes those users' rating sets, which are likely to be strange - all rates are similar
+        :param ratings: Dict of all users with their rating sets
+        :return: None
+        """
+        temp_rating_set = copy.deepcopy(orders_dict)
+        for user, rates in temp_rating_set.items():
+            if len(list(rates.values())) > 5 and sum(list(rates.values())) / len(list(rates.values())) == list(rates.values())[0]:
+                orders_dict.pop(user)
 
-def matrix_creating(current_user: str, file_name: str) -> list:
-    """
+    def set_orders_from_all_users_except_current_user(self) -> dict:
+        """
+        Sets dictionary of all users except current user
+        :return: dict of users with dicts of their product ratings
+        """
+        dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
+        print(f"self.current_user_id: {self.current_user_id}")
+        dict_without_current_user.pop(self.current_user_id)
+        # todo delete:
+        return dict_without_current_user
 
-    :param current_user:
-    :param file_name:
-    :return:
-    """
-    comparison = user_rating_comparison(current_user, file_name)
-    rating_dict = read_file(file_name)
-    matrix = []
-    rating_dict.pop(current_user)
-    for user, object in rating_dict.items():
-        # index = list(rating_dict.keys()).index(user)
-        matrix.append([0 for i in range(9)])
-    for i in range(len(matrix)):
-        print(matrix[i])
-    rating_dict_1 = read_file(file_name)
+    @staticmethod
+    def dist_cosine(vector_one: dict, vector_two: dict) -> float:
+        """
+        Calculation of cosine similarity between two users
+        :param vector_one: dictionary of first user's ratings
+        :param vector_two: dictionary of second user's ratings
+        :return: coefficient of cosine similarity
+        """
+        def dot_product(vector_one, vector_two):
+            d = 0.0
+            for dim in vector_one:
+                if dim in vector_two:
+                    d += vector_one[dim] * vector_two[dim]
 
-    user_list = list(rating_dict.keys())
-    for i in range(len(matrix)):
-        for j in range(len(matrix[i])):
-            if str(j + 1) in rating_dict_1[current_user].keys():
-                matrix[i][j] = False
-            elif str(j + 1) in rating_dict[user_list[i]].keys():
-                matrix[i][j] = rating_dict[user_list[i]][f"{j + 1}"] * comparison[i]
+            return d
 
-    return matrix
+        return dot_product(vector_one, vector_two) / (
+                    math.sqrt(dot_product(vector_one, vector_one)) * math.sqrt(dot_product(vector_two, vector_two)))
 
-def print_matrix(current_user: str, matrix: list, file_name: str) -> None:
-    comparison = user_rating_comparison(current_user, file_name)
-    rating_dict = read_file(file_name)
-    rating_dict.pop(current_user)
-    x = list(rating_dict.keys())
-    for i in range(len(matrix)):
-        print(f"{x[i]:<5}: {matrix[i]}")
-    sum_ = [matrix[0][i] + matrix[1][i] + matrix[2][i] for i in range(len(matrix[i]))]
-    result_ = [sum_[i] / sum(comparison[0:3]) for i in range(len(matrix[i]))]
-    print(f"sum:   {sum_}")
-    print(f"result:{result_}")
-    return result_
+    def user_rating_comparison(self) -> dict:
+        """
+        Comparison between current user and other users
+        :return: dict of cosine similarities between current user and other users
+        """
+        matching_factor_dict = {}
+        for user_id in self.orders_from_all_users_except_current_user:
+            matching_factor_dict[user_id] = self.dist_cosine(self.orders_from_all_users[self.current_user_id],
+                                                         self.orders_from_all_users_except_current_user[user_id])
 
+        result = dict(sorted(matching_factor_dict.items(), key=lambda x: x[1], reverse=True)[:10])
 
-def define_recommended_product(final_list):
-    max_ = 0
-    product_number = None
-    for index, rating in enumerate(final_list):
-        if rating > max_:
-            max_ = rating
-            product_number = index + 1
+        return result
 
-    print(f"We recommend you product {product_number} with rating {max_}")
+    def get_product_id_list(self):
+        comparison = self.user_rating_comparison()
+        product_id_list = []
+        for user in list(comparison.keys()):
+            product_id_list.extend(list(self.orders_from_all_users_except_current_user[user].keys()))
+        product_id_list = sorted(set(product_id_list))
 
-if __name__ == '__main__':
-    file_name = "C:\\Users\\Vladimir\\Python\\pythonProject\\recommendation_module\\venv\\data.csv"
-    current_user = 'ivan'
+        return product_id_list
 
-    matrix = matrix_creating(current_user, file_name)
-    for i in range(len(matrix)):
-        print(matrix[i])
+    def empty_matrix_creating(self):
+        """
+        Creating empty matrix
+        :return: numpy two dimensional array, matrix
+        """
 
-    final_list = print_matrix(current_user, matrix, file_name)
+        comparison = self.user_rating_comparison()
+        print(f"comparison: {comparison}")
 
-    define_recommended_product(final_list)
+        matrix = np.zeros((11, 46))
+        # matrix = np.zeros((11, 11))
+        # list_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
+        # list_2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47]
+        # 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99
+        list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
+        # print(len(list_2))
+        user_id_list = [int(x) for x in list(comparison.keys())]
+        print(user_id_list)
 
+        product_id_list = self.get_product_id_list()
+        print(product_id_list)
 
+        matrix[1:, 0] = user_id_list
+        matrix[0, 1:] = product_id_list
+        # matrix[1][1] = 0.047619047619047616
+        # matrix[1][1] = 0.05
+        # np.put(matrix, [48], [0.047619047619047616])
 
+        return matrix
+
+    def matrix_filling(self) -> ndarray:
+        """
+        Fills empty matrix with ratings multiplied by cosine similarity
+        :return:
+        """
+        comparison = self.user_rating_comparison()
+        matrix = self.empty_matrix_creating()
+
+        user_list = list(comparison.keys())
+
+        for i, user_id in enumerate(list(matrix[1:, 0])):
+            # product_id_list = list(map(lambda x: x.keys()[0], list(self.orders_from_all_users_except_current_user.values())[user_list[i]]))
+            for j, product_id in enumerate(list(matrix[0, 1:])):
+                if int(product_id) in self.orders_from_all_users[self.current_user_id].keys():
+                    matrix[i + 1, j + 1] = np.NAN
+                    # matrix[i + 1, j + 1] = 1
+                else:
+                    # print(self.orders_from_all_users_except_current_user)
+                    # print(self.orders_from_all_users_except_current_user[f"{int(user_id)}"])
+                    # print(list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()))
+                    # print(int(product_id))
+                    # print(int(product_id) in list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()))
+                    if int(product_id) in list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()):
+                        matrix[i + 1, j + 1] = self.orders_from_all_users_except_current_user[f"{int(user_id)}"][int(product_id)] * 100 * comparison[f"{int(user_id)}"]
+                        # matrix[i + 1, j + 1] = 0.047619047619047616
+                        # matrix[i + 1, j + 1] = 0.04
+                        # matrix[i + 1, j + 1] = 1
+                        # matrix[i + 1, j + 1] = 0.047619047
+                        # matrix[i + 1, j + 1] = 0.5
+            # matrix[1:, i + 1] = matrix[1:, i + 1] * list(comparison.values())[i]
+
+        return matrix
+
+    def get_sum_for_each_product(self) -> list:
+        """
+        Calculating list of sums of all rates for each product, multiplied by cosine similarity
+        :return: list of sums
+        """
+        matrix = self.matrix_filling()
+
+        sum_ = matrix[1:, 1:].sum(axis=0)
+
+        return sum_
+
+    def get_final_weight_for_each_product(self, matrix: ndarray) -> dict:
+        """
+        Calculating final weights for each product by subtracting sum on sum of all users' cosine similarities
+        :param matrix:
+        :return: list of weights for each product
+        """
+        sum_ = self.get_sum_for_each_product()
+        comparison = self.user_rating_comparison()
+
+        final_weight_list = list(map(lambda x: x * sum(list(comparison.values())), sum_))
+
+        product_id_list = self.get_product_id_list()
+        final_weight_dict = dict(zip(product_id_list, final_weight_list))
+        print(f"final_weight_dict: {final_weight_dict}")
+        return final_weight_dict
+
+    def print_user_table(self, matrix: list) -> None:
+        """
+        Printing table with users and there ratings for each product, multiplied by cosine similarity
+        :return: None
+        """
+        user_list = list(self.orders_from_all_users_except_current_user.keys())
+        for i in range(len(matrix)):
+            print(f"{user_list[i]:<5}: {matrix[i]}")
+
+    def define_recommended_product(self) -> list:
+        """
+        Defines the product with the most weight and its number
+        # :param weight_list: list of final weights for each product
+        :return: recommendation
+        """
+        final_weight_dict = {key:value for key, value in self.get_final_weight_for_each_product(self.matrix_filling()).items()
+                             if f"{value}" != f"{np.NAN}"}
+        sorted_weight_dict = dict(sorted(final_weight_dict.items(), key=lambda x: x[1], reverse=True)[:5])
+        print(f"sorted_weight_dict: {sorted_weight_dict}")
+        print(f"Dict of 5 recommended products: {sorted_weight_dict}")
+        return list(sorted_weight_dict.keys())
+
+    @staticmethod
+    def print_sum_for_each_product(sum_list: list) -> None:
+        """
+        Printing sums of rating multiplied by cosine similarity for each product
+        :return: None
+        """
+        print(f"sum: {sum_list:<5}")
