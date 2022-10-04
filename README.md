@@ -1,4 +1,8 @@
-Recommendation module for online marketplace.
+# RecommendationModule
 
+Recommendation module for online marketplace.
 Defines which products can attract a client.
 Stack: Django, Django Rest Framework, Pandas, NumPy, Kafka.
+
+After cloning run in terminal:
+pip install -r requirements.txt
