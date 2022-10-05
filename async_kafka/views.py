@@ -23,6 +23,15 @@ async def send_recommended_products_data(data: str) -> None:
         await producer.stop()
 
 
+async def send_basket_recommended_products_data(data: str) -> None:
+    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
+    await producer.start()
+    try:
+        await producer.send_and_wait("sendBasketRecommendedProductsData", data.encode('utf-8'))
+    finally:
+        await producer.stop()
+
+
 async def send_request_for_products_data():
     producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
     await producer.start()
@@ -127,14 +136,54 @@ async def consume_products_data():
     finally:
         await consumer.stop()
 
-# requestForUserBasket
+async def consume_request_for_basket_recommendation():
+    print("consume_request_for_basket_recommendation runs")
+    consumer = AIOKafkaConsumer(
+        'requestForUserBasket',
+        bootstrap_servers='localhost:9092',
+        group_id="requestForUser")
+    await consumer.start()
+    try:
+        async for msg in consumer:
+            print("consumed: ", msg.value.decode('UTF-8'))
+            data = msg.value.decode('UTF-8')
+            print(data)
 
-#Basket categories
-# all products
-# all orders
-# user's basket
-#-> list of strings
+            # await send_request_for_orders_data()
+            # await send_request_for_products_data()
+
+            consumerConf = {
+                'bootstrap.servers': "localhost:9092",
+                'group.id': "syncConsumerGroup",
+                'auto.offset.reset': "earliest"
+            }
+            c = Consumer(consumerConf)
+            try:
+                c.subscribe(["sendOrdersDataToRecommendationModule", "sendProductsDataToRecommendationModule"])
+                print("Trying to get orders and products from Kafka...")
+                msg = c.poll(timeout=1.0)
+                if msg is None: continue
+                if msg.error():
+                    raise KafkaException(msg.error())
+                else:
+                    # todo insert Danil's methods instead of print():
+                    print(f"orders and products data from msg: {msg}")
+                    print(eval(msg.value().decode('utf-8')))
+                    basket_recommended_products_data = "recommended products for basket"
+                    print(F"basket_recommended_products_data: {basket_recommended_products_data}")
+                    await send_basket_recommended_products_data(basket_recommended_products_data)
+            finally:
+                c.close()
+
+
+
+            await asyncio.sleep(0.1)
+
+    finally:
+        await consumer.stop()
+
 
 
 async def main():
-    await asyncio.gather(consume_request_for_user(), consume_orders_data(), consume_products_data())
+    await asyncio.gather(consume_request_for_user(), consume_orders_data(),
+                         consume_products_data(), consume_request_for_basket_recommendation())

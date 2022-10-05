@@ -1,3 +1,4 @@
+import json
 import sys
 import asyncio
 
@@ -28,9 +29,20 @@ def request_to_database():
     producer.produce("requestDataFromDB", key="3", value="give me data from DB")
     producer.flush()
 
+
 def request_on_orders_data():
     producer.produce("requestOrdersDataFromOrchestrator", key="4", value="give me orders data from DB")
     producer.flush()
+
+
+def save_orders():
+    with open("orders_2.txt", "r", encoding='utf-8') as f:
+        data = str(json.load(f))
+        print(data)
+        print(type(data))
+    producer.produce("frontSaveOrders", key="5", value=data.encode('utf-8'))
+    producer.flush()
+    print("save_orders done")
 
 def get_orders_data():
 
@@ -58,7 +70,9 @@ def get_orders_data():
     finally:
         consumer.close()
 
+
 if __name__ == '__main__':
     # send()
-    request_on_orders_data()
+    # request_on_orders_data()
     # get_orders_data()
+    save_orders()
