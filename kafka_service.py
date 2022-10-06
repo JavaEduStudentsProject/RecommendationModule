@@ -72,7 +72,8 @@ def get_orders_data():
 
 
 if __name__ == '__main__':
+    ...
     # send()
     # request_on_orders_data()
     # get_orders_data()
-    save_orders()
+    # save_orders()
