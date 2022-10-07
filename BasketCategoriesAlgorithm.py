@@ -5,11 +5,11 @@ import numpy as np
 
 
 class BasketCategoriesAlgorithm:
-    def __init__(self):
+    def __init__(self, products, orders, basket):
 
-        self.df_products = self.data_frame_products()
-        self.df_customers = self.data_frame_customers()
-        self.df_orders = self.data_frame_orders()
+        self.df_products = products
+        self.df_customers = basket
+        self.df_orders = orders
 
         self.arr_of_order_combinations = []
         self.product_to_categories = {}
@@ -145,3 +145,13 @@ class BasketCategoriesAlgorithm:
             self.arr_recommendations_for_user.append(self.final_map.get(i))
         print("SPECIAL FOR YOU!!!")
         print(self.arr_recommendations_for_user)
+
+    def do_basket_categories_algorithm(self):
+        self.get_arr_of_order_combinations()
+        self.get_product_to_categories()
+        self.get_possible_combinations()
+        self.get_appearance_from_orders_separated()
+        self.use_formula()
+        self.finalization()
+        self.get_products_from_customer()
+        self.get_recommendations_for_user(self.arr_of_customer)

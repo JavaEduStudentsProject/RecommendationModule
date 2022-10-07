@@ -5,8 +5,8 @@ import numpy as np
 
 
 class BestProductsAlgorithm:
-    def __init__(self):
-        self.df_products = self.data_frame_products()
+    def __init__(self, products):
+        self.df_products = products
         self.map_of_categories = {}
         self.final_map = {}
 
@@ -38,3 +38,8 @@ class BestProductsAlgorithm:
             self.final_map[i[0]] = temp2
         print("final_map")
         print(self.final_map)
+
+    def do_best_product_algorithm(self):
+        self.get_product_to_categories()
+        self.sort_and_get_final()
+
