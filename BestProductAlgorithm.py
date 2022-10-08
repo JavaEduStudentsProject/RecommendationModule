@@ -6,15 +6,28 @@ import numpy as np
 
 class BestProductsAlgorithm:
     def __init__(self, products):
-        self.df_products = products
+        self.df_products = self.set_products(products)
         self.map_of_categories = {}
         self.final_map = {}
 
-    def data_frame_products(self) :
-        with open("products.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    # def data_frame_products(self) :
+    #     with open("products.txt", "r", encoding='utf-8') as f:
+    #         data = json.load(f)
+    #         data = json_normalize(data)
+    #         return pd.DataFrame(data)
+
+    def set_products(self, products):
+        print("DANIL STAFF")
+        print("Danil products" + products)
+        print(type(products))
+        raw_products = eval(products)
+        print("Danil raw_products" + raw_products)
+        print(type(raw_products))
+        # str_products = eval(raw_products)
+        # print(str_products)
+        # print(type(str_products))
+        data = json.loads(raw_products)
+        return pd.DataFrame(json_normalize(data))
 
     # Получаем словарь словарей, в котором ключем будут названия категории, значем - словарь с ключем id товара
     # и значением рейтинга
@@ -38,6 +51,7 @@ class BestProductsAlgorithm:
             self.final_map[i[0]] = temp2
         print("final_map")
         print(self.final_map)
+        return list(self.final_map)
 
     def do_best_product_algorithm(self):
         self.get_product_to_categories()
