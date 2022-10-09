@@ -11,7 +11,7 @@ import os
 import asyncio
 
 from django.core.wsgi import get_wsgi_application
-# from async_kafka.views import main
+
 from async_kafka.views import main, consume_orders_data, consume_request_for_user
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recommendation_module.settings')
@@ -20,8 +20,3 @@ application = get_wsgi_application()
 print("Server runs")
 
 asyncio.run(main())
-
-# asyncio.run(consume_request_for_user())
-# print("consume_request_for_user started")
-# asyncio.run(consume_orders_data())
-# print("consume_orders_data started")
