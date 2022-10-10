@@ -5,11 +5,11 @@ import numpy as np
 
 
 class BasketCategoriesAlgorithm:
-    def __init__(self):
+    def __init__(self, products, orders, basket):
 
-        self.df_products = self.data_frame_products()
-        self.df_customers = self.data_frame_customers()
-        self.df_orders = self.data_frame_orders()
+        self.df_products = self.set_products(products)
+        self.df_customers = self.set_basket(basket)
+        self.df_orders = self.set_orders(orders)
 
         self.arr_of_order_combinations = []
         self.product_to_categories = {}
@@ -21,23 +21,38 @@ class BasketCategoriesAlgorithm:
 
         self.arr_of_customer = []
 
-    def data_frame_products(self):
-        with open("products.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    # def data_frame_products(self):
+    #     with open("products.txt", "r", encoding='utf-8') as f:
+    #         data = json.load(f)
+    #         data = json_normalize(data)
+    #         return pd.DataFrame(data)
 
-    def data_frame_customers(self):
-        with open("customer.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    # def data_frame_customers(self):
+    #     with open("customer.txt", "r", encoding='utf-8') as f:
+    #         data = json.load(f)
+    #         data = json_normalize(data)
+    #         return pd.DataFrame(data)
+    #
+    # def data_frame_orders(self):
+    #     with open("orders.txt", "r", encoding='utf-8') as f:
+    #         data = json.load(f)
+    #         data = json_normalize(data)
+    #         return pd.DataFrame(data)
 
-    def data_frame_orders(self):
-        with open("orders.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    def set_products(self, products):
+        raw_products = eval(products)
+        data = json.loads(raw_products)
+        return pd.DataFrame(json_normalize(data))
+
+    def set_orders(self, orders):
+        raw_orders = eval(orders)
+        data = json.loads(raw_orders)
+        return pd.DataFrame(json_normalize(data))
+
+    def set_basket(self, basket):
+        raw_basket = eval(basket)
+        data = json.loads(raw_basket)
+        return pd.DataFrame(json_normalize(data))
 
      # Список заказов пользователей
     def get_products_from_customer(self) -> None:
@@ -145,3 +160,14 @@ class BasketCategoriesAlgorithm:
             self.arr_recommendations_for_user.append(self.final_map.get(i))
         print("SPECIAL FOR YOU!!!")
         print(self.arr_recommendations_for_user)
+        return self.arr_recommendations_for_user
+
+    def do_basket_categories_algorithm(self):
+        self.get_arr_of_order_combinations()
+        self.get_product_to_categories()
+        self.get_possible_combinations()
+        self.get_appearance_from_orders_separated()
+        self.use_formula()
+        self.finalization()
+        self.get_products_from_customer()
+        self.get_recommendations_for_user(self.arr_of_customer)

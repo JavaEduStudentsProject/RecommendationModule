@@ -3,31 +3,16 @@ from confluent_kafka import Consumer, KafkaException
 import asyncio
 
 from CosineSimilarity import CosineSimilarity
+from BasketCategoriesAlgorithm import BasketCategoriesAlgorithm
+from BestProductAlgorithm import BestProductsAlgorithm
 
 
 async def send_request_for_orders_data():
     producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
     await producer.start()
     try:
-        await producer.send_and_wait("requestOrdersDataFromOrchestrator", b"Async string from python: give me orders data from DB")
-    finally:
-        await producer.stop()
-
-
-async def send_recommended_products_data(data: str) -> None:
-    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
-    await producer.start()
-    try:
-        await producer.send_and_wait("sendRecommendedProductsData", data.encode('utf-8'))
-    finally:
-        await producer.stop()
-
-
-async def send_basket_recommended_products_data(data: str) -> None:
-    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
-    await producer.start()
-    try:
-        await producer.send_and_wait("sendBasketRecommendedProductsData", data.encode('utf-8'))
+        await producer.send_and_wait("requestOrdersDataFromOrchestrator",
+                                     b"Async string from python: give me orders data from DB")
     finally:
         await producer.stop()
 
@@ -42,21 +27,39 @@ async def send_request_for_products_data():
         await producer.stop()
 
 
-async def send_recommended_category_products_data(data: str) -> None:
-    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
-    await producer.start()
-    try:
-        await producer.send_and_wait("sendRecommendedCategoryProductsData", data.encode('utf-8'))
-    finally:
-        await producer.stop()
-
-
 async def send_request_for_products_and_orders_data():
     producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
     await producer.start()
     try:
         await producer.send_and_wait("requestProductsAndOrdersDataFromOrchestrator",
                                      b"Async string from python: give me products and orders data from DB")
+    finally:
+        await producer.stop()
+
+
+async def send_recommended_products_data(data: str) -> None:
+    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
+    await producer.start()
+    try:
+        await producer.send_and_wait("sendRecommendedProductsData", data.encode('utf-8'))
+    finally:
+        await producer.stop()
+
+
+async def send_basket_category(data: str) -> None:
+    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
+    await producer.start()
+    try:
+        await producer.send_and_wait("sendBasketRecommendedProductsData", data.encode('utf-8'))
+    finally:
+        await producer.stop()
+
+
+async def send_best_products(data: str) -> None:
+    producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
+    await producer.start()
+    try:
+        await producer.send_and_wait("sendRecommendedCategoryProductsData", data.encode('utf-8'))
     finally:
         await producer.stop()
 
@@ -137,11 +140,10 @@ async def consume_products_data():
                   msg.key, msg.value.decode('UTF-8'))
             data = msg.value.decode('UTF-8')
 
-            #todo insert Danil's methods instead of print():
-            print(f"data for Danil's category method: {data}") #string data (products list) for Danil's method
-            data_from_danils_method = "category products data"
+            bp = BestProductsAlgorithm(data)
+            best_product_data = str(bp.do_best_product_algorithm())
 
-            await send_recommended_category_products_data(data_from_danils_method)
+            await send_best_products(best_product_data)
             await asyncio.sleep(0.1)
 
     finally:
@@ -206,11 +208,11 @@ async def consume_data_for_basket_recommendation():
                     print("test 2")
                 else:
                     print("test 8")
-                    # todo add Danil's methods
-                    print(f"final data_from_kafka: {data_from_kafka}")  # products and orders lists
-                    print(f"final data_from_front: {data_from_front}")  # array with product ids from basket
-                    basket_products_recommendation_data = "data"
-                    await send_basket_recommended_products_data(basket_products_recommendation_data)
+                    bs = BasketCategoriesAlgorithm(data_from_kafka[0], data_from_kafka[1], data_from_front)
+                    basket_categories_data = str(bs.do_basket_categories_algorithm())
+                    # print(f"final data_from_kafka: {data_from_kafka}")  # products and orders lists
+                    # print(f"final data_from_front: {data_from_front}")  # array with product ids from basket
+                    await send_basket_category(basket_categories_data)
 
                 c.close()
 
