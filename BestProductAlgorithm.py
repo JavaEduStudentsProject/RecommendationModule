@@ -15,12 +15,19 @@ class BestProductsAlgorithm:
     #         data = json.load(f)
     #         data = json_normalize(data)
     #         return pd.DataFrame(data)
+    def parsing(self, raw_str):
+        raw_str = raw_str.replace("{\'", "{\"")
+        raw_str = raw_str.replace(" \'", " \"")
+        raw_str = raw_str.replace("\':", "\":")
+        raw_str = raw_str.replace("\',", "\",")
+        return raw_str
 
     def set_products(self, products):
         print("DANIL STAFF")
         print("Danil products" + products)
         print(type(products))
-        raw_products = eval(products)
+        raw_str = eval(products)
+        raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
         # str_products = eval(raw_products)

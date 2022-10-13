@@ -39,18 +39,29 @@ class BasketCategoriesAlgorithm:
     #         data = json_normalize(data)
     #         return pd.DataFrame(data)
 
+    # Метод что б приводить файл с базы в нужный вид
+    def parsing(self, raw_str):
+        raw_str = raw_str.replace("{\'", "{\"")
+        raw_str = raw_str.replace(" \'", " \"")
+        raw_str = raw_str.replace("\':", "\":")
+        raw_str = raw_str.replace("\',", "\",")
+        return raw_str
+
     def set_products(self, products):
         raw_products = eval(products)
+        raw_products = self.parsing(raw_products)
         data = json.loads(raw_products)
         return pd.DataFrame(json_normalize(data))
 
     def set_orders(self, orders):
         raw_orders = eval(orders)
+        raw_orders = self.parsing(raw_orders)
         data = json.loads(raw_orders)
         return pd.DataFrame(json_normalize(data))
 
     def set_basket(self, basket):
         raw_basket = eval(basket)
+        raw_basket = self.parsing(raw_basket)
         data = json.loads(raw_basket)
         return pd.DataFrame(json_normalize(data))
 
