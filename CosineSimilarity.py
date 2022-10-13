@@ -20,13 +20,12 @@ class CosineSimilarity:
         Creating of dictionary with users and products, they have bought.
         :return: dictionary with users and sorted list of products, they have bought {user: [1, 2, 34, 56, 88]}
         """
-        raw_orders = eval(self.data)
-        print(f"raw_orders: {raw_orders}")
-        str_orders = eval(raw_orders)
-
+        str_orders = eval(self.data)
+        str_orders = str_orders.replace("{\'", "{\"")
+        str_orders = str_orders.replace(" \'", " \"")
+        str_orders = str_orders.replace("\':", "\":")
+        str_orders = str_orders.replace("\',", "\",")
         orders = json.loads(str_orders)
-        print(f"orders: {orders}")
-        print(f"orders: {type(orders)}")
 
         orders_dict = {}
         all_orders_quantity = len(orders)

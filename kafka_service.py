@@ -36,13 +36,24 @@ def request_on_orders_data():
 
 
 def save_orders():
-    with open("orders_2.txt", "r", encoding='utf-8') as f:
+    with open("orders_2.txt", "r", encoding='utf-8-sig') as f:
         data = str(json.load(f))
         print(data)
         print(type(data))
-    producer.produce("frontSaveOrders", key="5", value=data.encode('utf-8'))
+    producer.produce("frontSaveOrders", key="7", value=data.encode('utf-8'))
     producer.flush()
     print("save_orders done")
+
+
+def save_products():
+    with open("products.txt", "r", encoding='utf-8-sig') as f:
+        data = str(json.load(f))
+        print(data)
+        print(type(data))
+    producer.produce("frontSaveProducts", key="8", value=data.encode('utf-8'))
+    producer.flush()
+    print("save_products done")
+
 
 def get_orders_data():
 
@@ -77,3 +88,4 @@ if __name__ == '__main__':
     # request_on_orders_data()
     # get_orders_data()
     # save_orders()
+    # save_products()

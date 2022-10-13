@@ -96,7 +96,7 @@ async def consume_orders_data():
         async for msg in consumer:
             print("consumed: ", msg.topic, msg.partition, msg.offset,
                   msg.key, msg.value.decode('UTF-8'))
-            data_from_kafka = msg.value.decode('UTF-8')
+            data_from_kafka = eval(msg.value.decode('UTF-8'))
             print(data_from_kafka)
 
             consumerConf = {
@@ -114,6 +114,7 @@ async def consume_orders_data():
                     raise KafkaException(msg.error())
                 else:
                     data = data_from_kafka
+                    print(f"id: {eval(msg.value().decode('utf-8'))}")
                     cs = CosineSimilarity(eval(msg.value().decode('utf-8')), data)
                     recommended_products_data = str(cs.define_recommended_product())
                     print(recommended_products_data)
