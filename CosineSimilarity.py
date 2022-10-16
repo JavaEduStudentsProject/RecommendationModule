@@ -2,32 +2,43 @@ import json
 import math
 import copy
 import numpy as np
-import pandas
 from numpy import ndarray, float64
 
 
 class CosineSimilarity:
 
-    def __init__(self, current_user_id, data):
-        self.current_user_id = current_user_id
+    def __init__(self, current_user_username, data):
+        self.current_user_username = current_user_username
         self.data = data
+        self.current_user_id = self.define_current_user_id()
+
 
         self.orders_from_all_users = self.orders_dict_creating()
         self.orders_from_all_users_except_current_user = self.set_orders_from_all_users_except_current_user()
+
+    def define_current_user_id(self):
+        for order in self.orders_list_regex():
+            if order['username'] == self.current_user_username:
+                return str(order['userId'])
+
+    def orders_list_regex(self):
+        str_orders = eval(self.data)
+        str_orders = str_orders.replace("{\'", "{\"")
+        str_orders = str_orders.replace(" \'", " \"")
+        str_orders = str_orders.replace("\':", "\":")
+        str_orders = str_orders.replace("\',", "\",")
+        str_orders = str_orders.replace("\'},", "\"},")
+        str_orders = str_orders.replace("\'}]", "\"}]")
+        orders = json.loads(str_orders)
+
+        return orders
 
     def orders_dict_creating(self) -> dict:
         """
         Creating of dictionary with users and products, they have bought.
         :return: dictionary with users and sorted list of products, they have bought {user: [1, 2, 34, 56, 88]}
         """
-        raw_orders = eval(self.data)
-        print(f"raw_orders: {raw_orders}")
-        str_orders = eval(raw_orders)
-
-        orders = json.loads(str_orders)
-        print(f"orders: {orders}")
-        print(f"orders: {type(orders)}")
-
+        orders = self.orders_list_regex()
         orders_dict = {}
         all_orders_quantity = len(orders)
         for order in orders:
@@ -78,7 +89,6 @@ class CosineSimilarity:
         :return: dict of users with dicts of their product ratings
         """
         dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
-        print(f"self.current_user_id: {self.current_user_id}")
         dict_without_current_user.pop(self.current_user_id)
         # todo delete:
         return dict_without_current_user
@@ -135,14 +145,11 @@ class CosineSimilarity:
         print(f"comparison: {comparison}")
 
         matrix = np.zeros((11, 46))
-        # matrix = np.zeros((11, 11))
-        # list_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
         list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
-        # list_2 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47]
-        # 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99
+
         list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
-        # print(len(list_2))
+
         user_id_list = [int(x) for x in list(comparison.keys())]
         print(user_id_list)
 
@@ -151,9 +158,6 @@ class CosineSimilarity:
 
         matrix[1:, 0] = user_id_list
         matrix[0, 1:] = product_id_list
-        # matrix[1][1] = 0.047619047619047616
-        # matrix[1][1] = 0.05
-        # np.put(matrix, [48], [0.047619047619047616])
 
         return matrix
 
@@ -172,21 +176,9 @@ class CosineSimilarity:
             for j, product_id in enumerate(list(matrix[0, 1:])):
                 if int(product_id) in self.orders_from_all_users[self.current_user_id].keys():
                     matrix[i + 1, j + 1] = np.NAN
-                    # matrix[i + 1, j + 1] = 1
                 else:
-                    # print(self.orders_from_all_users_except_current_user)
-                    # print(self.orders_from_all_users_except_current_user[f"{int(user_id)}"])
-                    # print(list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()))
-                    # print(int(product_id))
-                    # print(int(product_id) in list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()))
                     if int(product_id) in list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()):
                         matrix[i + 1, j + 1] = self.orders_from_all_users_except_current_user[f"{int(user_id)}"][int(product_id)] * 100 * comparison[f"{int(user_id)}"]
-                        # matrix[i + 1, j + 1] = 0.047619047619047616
-                        # matrix[i + 1, j + 1] = 0.04
-                        # matrix[i + 1, j + 1] = 1
-                        # matrix[i + 1, j + 1] = 0.047619047
-                        # matrix[i + 1, j + 1] = 0.5
-            # matrix[1:, i + 1] = matrix[1:, i + 1] * list(comparison.values())[i]
 
         return matrix
 
