@@ -102,19 +102,21 @@ async def consume_orders_data():
             consumerConf = {
                 'bootstrap.servers': "localhost:9092",
                 'group.id': "syncConsumerGroup",
-                'auto.offset.reset': "earliest"
+                'auto.offset.reset': "latest"
             }
             c = Consumer(consumerConf)
             try:
                 c.subscribe(["requestForUser"])
-                print("Trying to get id from Kafka...")
+                print("Trying to get username from Kafka...")
                 msg = c.poll(timeout=1.0)
+                print("msg.value():")
+                print(msg.value())
                 if msg is None: continue
                 if msg.error():
                     raise KafkaException(msg.error())
                 else:
                     data = data_from_kafka
-                    print(f"id: {eval(msg.value().decode('utf-8'))}")
+                    print(f"username: {eval(msg.value().decode('utf-8'))}")
                     cs = CosineSimilarity(eval(msg.value().decode('utf-8')), data)
                     recommended_products_data = str(cs.define_recommended_product())
                     print(recommended_products_data)
@@ -143,6 +145,8 @@ async def consume_products_data():
 
             bp = BestProductsAlgorithm(data)
             best_product_data = str(bp.do_best_product_algorithm())
+
+            best_product_data = "best_product_data"
 
             await send_best_products(best_product_data)
             await asyncio.sleep(0.1)
