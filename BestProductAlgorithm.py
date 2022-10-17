@@ -7,9 +7,6 @@ import numpy as np
 class BestProductsAlgorithm:
     def __init__(self, products):
         self.df_products = self.set_products(products)
-        # self.df_products = self.data_frame_products()
-        # self.df_products1 = self.set_products(products)
-        # self.df_products = self.set_products(products)
         self.map_of_categories = {}
         self.final_map = {}
 
@@ -27,25 +24,25 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
         raw_str = raw_str.replace("},  ,", "},")
-        raw_str = raw_str.replace(": {      ", ": [      ")
-        raw_str = raw_str.replace("    },    ", "    ],    ")
-        # raw_str = raw_str.replace("\"non-filter_features\": {", " ")
-        # raw_str = raw_str.replace("  },    \"filter_features\": { ", " ")
-        # raw_str = raw_str.replace("    },    ", " ")
-        raw_str = raw_str.replace(" ","")
+
+        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
+        raw_str = raw_str.replace("    },    ", " ,")
+
 
         return raw_str
 
     def set_products(self, products):
         print("DANIL STAFF")
         raw_str = eval(products)
+        print("Danil raw_str")
+        print(raw_str)
         raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
-        # print(str_products)
-        # print(type(str_products))
+
         data = json.loads(raw_products)
-        print("Final hueta 2")
+        print("Final DF")
         print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
@@ -56,9 +53,7 @@ class BestProductsAlgorithm:
             if not self.df_products["category"][i] in self.map_of_categories:
                 self.map_of_categories[self.df_products["category"][i]] = dict([])
 
-            print("TEST")
-            print(self.df_products["non-filter_features"][i])
-            self.map_of_categories[self.df_products["category"][i]][self.df_products["id"][i]] = self.df_products["non-filter_features"]["rating"][i]
+            self.map_of_categories[self.df_products["category"][i]][self.df_products["id"][i]] = self.df_products["rating"][i]
 
         print("KYFYGKSUEFUYKUEmap_of_categories")
         print(self.map_of_categories)
