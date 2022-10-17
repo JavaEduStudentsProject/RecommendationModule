@@ -7,9 +7,6 @@ import numpy as np
 class BestProductsAlgorithm:
     def __init__(self, products):
         self.df_products = self.set_products(products)
-        # self.df_products = self.data_frame_products()
-        # self.df_products1 = self.set_products(products)
-        # self.df_products = self.set_products(products)
         self.map_of_categories = {}
         self.final_map = {}
 
@@ -27,6 +24,7 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
         raw_str = raw_str.replace("},  ,", "},")
+
         raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
@@ -42,10 +40,9 @@ class BestProductsAlgorithm:
         raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
-        # print(str_products)
-        # print(type(str_products))
+
         data = json.loads(raw_products)
-        print("Final hueta 2")
+        print("Final DF")
         print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
