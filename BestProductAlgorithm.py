@@ -29,7 +29,6 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
 
-
         return raw_str
 
     def set_products(self, products):

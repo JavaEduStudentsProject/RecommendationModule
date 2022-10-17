@@ -45,12 +45,25 @@ class BasketCategoriesAlgorithm:
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+
+        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
+        raw_str = raw_str.replace("    },    ", " ,")
+
         return raw_str
 
     def set_products(self, products):
-        raw_products = eval(products)
-        raw_products = self.parsing(raw_products)
+        print("DANIL STAFF")
+        raw_str = eval(products)
+        print("Danil raw_str")
+        print(raw_str)
+        raw_products = self.parsing(raw_str)
+        print("Danil raw_products" + raw_products)
+        print(type(raw_products))
+
         data = json.loads(raw_products)
+        print("Final DF")
+        print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
     def set_orders(self, orders):
