@@ -30,7 +30,8 @@ class CosineSimilarity:
         str_orders = str_orders.replace("\'},", "\"},")
         str_orders = str_orders.replace("\'}]", "\"}]")
         orders = json.loads(str_orders)
-
+        print("orders in 33 string:")
+        print(orders)
         return orders
 
     def orders_dict_creating(self) -> dict:
@@ -42,6 +43,9 @@ class CosineSimilarity:
         orders_dict = {}
         all_orders_quantity = len(orders)
         for order in orders:
+            print("order in 45 str")
+            print(order)
+            print(order["userId"])
             if f"{order['userId']}" in orders_dict:
                 for product in order['products']:
                     if product['id'] in orders_dict[f"{order['userId']}"].keys():
