@@ -62,7 +62,7 @@ class BestProductsAlgorithm:
         for i in self.map_of_categories.items():
             temp1 = sorted(i[1].items(), key=lambda x: x[1], reverse=True)
             temp2 = []
-            for j in range(2):
+            for j in range(4):
                 temp2.append(temp1[j][0])
             self.final_map[i[0]] = temp2
         print("final_map")
