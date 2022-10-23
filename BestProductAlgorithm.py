@@ -23,9 +23,11 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        # #todo костыль!!!
+        # raw_str = raw_str.replace("g\'s", "gs")
         raw_str = raw_str.replace("},  ,", "},")
 
-        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
 

@@ -41,12 +41,16 @@ class BasketCategoriesAlgorithm:
 
     # Метод что б приводить файл с базы в нужный вид
     def parsing(self, raw_str):
+        print("type of raw str:")
+        print(type(raw_str))
         raw_str = raw_str.replace("{\'", "{\"")
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        raw_str = raw_str.replace("\'},", "\"},")
+        raw_str = raw_str.replace("},  ,", "},")
 
-        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
 
@@ -57,12 +61,16 @@ class BasketCategoriesAlgorithm:
         raw_str = eval(products)
         print("Danil raw_str")
         print(raw_str)
+        print("raw_str type: ")
+        print(type(raw_str))
         raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
 
         data = json.loads(raw_products)
         print("Final DF")
+        print(data)
+        print(type(data))
         print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
@@ -73,9 +81,11 @@ class BasketCategoriesAlgorithm:
         return pd.DataFrame(json_normalize(data))
 
     def set_basket(self, basket):
-        raw_basket = eval(basket)
-        raw_basket = self.parsing(raw_basket)
-        data = json.loads(raw_basket)
+        print(basket)
+        print(type(basket))
+        # raw_basket = eval(basket)
+        # raw_basket = self.parsing(raw_basket)
+        data = json.loads(basket)
         return pd.DataFrame(json_normalize(data))
 
      # Список заказов пользователей
