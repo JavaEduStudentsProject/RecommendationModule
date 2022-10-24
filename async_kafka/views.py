@@ -61,7 +61,7 @@ async def send_best_products(data: str) -> None:
     producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
     await producer.start()
     try:
-        await producer.send_and_wait("sendRecommendedCategoryProductsData", data.encode('utf-8'))
+        await producer.send_and_wait("sendRecommendedBestProductsData", data.encode('utf-8'))
     finally:
         await producer.stop()
 
