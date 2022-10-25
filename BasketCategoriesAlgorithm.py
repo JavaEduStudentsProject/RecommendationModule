@@ -21,32 +21,18 @@ class BasketCategoriesAlgorithm:
 
         self.arr_of_customer = []
 
-    # def data_frame_products(self):
-    #     with open("products.txt", "r", encoding='utf-8') as f:
-    #         data = json.load(f)
-    #         data = json_normalize(data)
-    #         return pd.DataFrame(data)
-
-    # def data_frame_customers(self):
-    #     with open("customer.txt", "r", encoding='utf-8') as f:
-    #         data = json.load(f)
-    #         data = json_normalize(data)
-    #         return pd.DataFrame(data)
-    #
-    # def data_frame_orders(self):
-    #     with open("orders.txt", "r", encoding='utf-8') as f:
-    #         data = json.load(f)
-    #         data = json_normalize(data)
-    #         return pd.DataFrame(data)
-
     # Метод что б приводить файл с базы в нужный вид
     def parsing(self, raw_str):
+        print("type of raw str:")
+        print(type(raw_str))
         raw_str = raw_str.replace("{\'", "{\"")
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        raw_str = raw_str.replace("\'},", "\"},")
+        raw_str = raw_str.replace("},  ,", "},")
 
-        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
 
@@ -57,12 +43,16 @@ class BasketCategoriesAlgorithm:
         raw_str = eval(products)
         print("Danil raw_str")
         print(raw_str)
+        print("raw_str type: ")
+        print(type(raw_str))
         raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
 
         data = json.loads(raw_products)
         print("Final DF")
+        print(data)
+        print(type(data))
         print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
@@ -73,12 +63,14 @@ class BasketCategoriesAlgorithm:
         return pd.DataFrame(json_normalize(data))
 
     def set_basket(self, basket):
-        raw_basket = eval(basket)
-        raw_basket = self.parsing(raw_basket)
-        data = json.loads(raw_basket)
+        print(basket)
+        print(type(basket))
+        # raw_basket = eval(basket)
+        # raw_basket = self.parsing(raw_basket)
+        data = json.loads(basket)
         return pd.DataFrame(json_normalize(data))
 
-     # Список заказов пользователей
+    # Список заказов пользователей
     def get_products_from_customer(self) -> None:
         for i in self.df_customers["products"][0]:
             self.arr_of_customer.append(i["id"])
@@ -99,7 +91,6 @@ class BasketCategoriesAlgorithm:
                         self.arr_of_order_combinations.append([n, m])
         print("pairs_from_orders:")
         print(self.arr_of_order_combinations)
-
 
     # Получаем словарь, где ключ это id товара, значение словарь с названиями категорий и количством товаров
     # этой категории
@@ -156,7 +147,8 @@ class BasketCategoriesAlgorithm:
                         temp_cleared_category.append(self.df_products["category"][n - 1])
 
             # 0,1 доблены в сумму что б не получалось деления на 0
-            value = self.product_to_categories[i[0]][i[1]] /(0.1 + temp_cleared_id.count(i[0]) + temp_cleared_category.count(i[1]))
+            value = self.product_to_categories[i[0]][i[1]] / (
+                        0.1 + temp_cleared_id.count(i[0]) + temp_cleared_category.count(i[1]))
             self.formula_result.append([i, value])
 
         print("formula_result")
@@ -194,4 +186,5 @@ class BasketCategoriesAlgorithm:
         self.use_formula()
         self.finalization()
         self.get_products_from_customer()
-        self.get_recommendations_for_user(self.arr_of_customer)
+        result = self.get_recommendations_for_user(self.arr_of_customer)
+        return result

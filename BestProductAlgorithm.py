@@ -23,9 +23,11 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        # #todo костыль!!!
+        # raw_str = raw_str.replace("g\'s", "gs")
         raw_str = raw_str.replace("},  ,", "},")
 
-        raw_str = raw_str.replace("  \"non-filter_features\": {", " ")
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
 
@@ -67,9 +69,11 @@ class BestProductsAlgorithm:
             self.final_map[i[0]] = temp2
         print("final_map")
         print(self.final_map)
-        return list(self.final_map)
+        # return list(self.final_map)
+        return self.final_map
 
     def do_best_product_algorithm(self):
         self.get_product_to_categories()
-        self.sort_and_get_final()
+        result = self.sort_and_get_final()
+        return result
 
