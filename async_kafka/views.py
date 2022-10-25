@@ -184,6 +184,8 @@ async def consume_products_data():
 
             bp = BestProductsAlgorithm(data)
             best_product_data = str(bp.do_best_product_algorithm())
+            print("ЖЪЪЖЪЖЖЪЖЪ")
+            print(best_product_data)
 
             await send_best_products(best_product_data)
             await asyncio.sleep(0.1)
