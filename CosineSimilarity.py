@@ -30,7 +30,8 @@ class CosineSimilarity:
         str_orders = str_orders.replace("\'},", "\"},")
         str_orders = str_orders.replace("\'}]", "\"}]")
         orders = json.loads(str_orders)
-
+        print("orders in 33 string:")
+        print(orders)
         return orders
 
     def orders_dict_creating(self) -> dict:
@@ -42,6 +43,9 @@ class CosineSimilarity:
         orders_dict = {}
         all_orders_quantity = len(orders)
         for order in orders:
+            # print("order in 45 str")
+            # print(order)
+            # print(order["userId"])
             if f"{order['userId']}" in orders_dict:
                 for product in order['products']:
                     if product['id'] in orders_dict[f"{order['userId']}"].keys():
@@ -132,7 +136,8 @@ class CosineSimilarity:
         for user in list(comparison.keys()):
             product_id_list.extend(list(self.orders_from_all_users_except_current_user[user].keys()))
         product_id_list = sorted(set(product_id_list))
-
+        print("product_id_list: (139)")
+        print(product_id_list)
         return product_id_list
 
     def empty_matrix_creating(self):
@@ -144,17 +149,18 @@ class CosineSimilarity:
         comparison = self.user_rating_comparison()
         print(f"comparison: {comparison}")
 
-        matrix = np.zeros((11, 46))
-
-        list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
-
-        list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
-
-        user_id_list = [int(x) for x in list(comparison.keys())]
-        print(user_id_list)
 
         product_id_list = self.get_product_id_list()
         print(product_id_list)
+        print(len(product_id_list))
+        matrix = np.zeros((11, len(product_id_list) + 1))
+
+        # list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
+        #
+        # list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
+
+        user_id_list = [int(x) for x in list(comparison.keys())]
+        print(user_id_list)
 
         matrix[1:, 0] = user_id_list
         matrix[0, 1:] = product_id_list

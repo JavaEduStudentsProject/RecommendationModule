@@ -45,7 +45,8 @@ def save_orders():
 
 
 def save_products():
-    with open("products.txt", "r", encoding='utf-8-sig') as f:
+    # with open("products.txt", "r", encoding='utf-8-sig') as f:
+    with open("new_products.txt", "r", encoding='utf-8-sig') as f:
         data = str(json.load(f))
         print(data)
         print(type(data))
@@ -86,5 +87,5 @@ if __name__ == '__main__':
     # send()
     # request_on_orders_data()
     # get_orders_data()
-    save_orders()
-    # save_products()
+    # save_orders()
+    save_products()

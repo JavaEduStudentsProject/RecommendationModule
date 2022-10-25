@@ -7,9 +7,6 @@ import numpy as np
 class BestProductsAlgorithm:
     def __init__(self, products):
         self.df_products = self.set_products(products)
-        # self.df_products = self.data_frame_products()
-        # self.df_products1 = self.set_products(products)
-        # self.df_products = self.set_products(products)
         self.map_of_categories = {}
         self.final_map = {}
 
@@ -26,26 +23,27 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        # #todo костыль!!!
+        # raw_str = raw_str.replace("g\'s", "gs")
         raw_str = raw_str.replace("},  ,", "},")
-        raw_str = raw_str.replace(": {      ", ": [      ")
-        raw_str = raw_str.replace("    },    ", "    ],    ")
-        # raw_str = raw_str.replace("\"non-filter_features\": {", " ")
-        # raw_str = raw_str.replace("  },    \"filter_features\": { ", " ")
-        # raw_str = raw_str.replace("    },    ", " ")
-        raw_str = raw_str.replace(" ","")
+
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
+        raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
+        raw_str = raw_str.replace("    },    ", " ,")
 
         return raw_str
 
     def set_products(self, products):
         print("DANIL STAFF")
         raw_str = eval(products)
+        print("Danil raw_str")
+        print(raw_str)
         raw_products = self.parsing(raw_str)
         print("Danil raw_products" + raw_products)
         print(type(raw_products))
-        # print(str_products)
-        # print(type(str_products))
+
         data = json.loads(raw_products)
-        print("Final hueta 2")
+        print("Final DF")
         print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
@@ -56,9 +54,7 @@ class BestProductsAlgorithm:
             if not self.df_products["category"][i] in self.map_of_categories:
                 self.map_of_categories[self.df_products["category"][i]] = dict([])
 
-            print("TEST")
-            print(self.df_products["non-filter_features"][i])
-            self.map_of_categories[self.df_products["category"][i]][self.df_products["id"][i]] = self.df_products["non-filter_features"]["rating"][i]
+            self.map_of_categories[self.df_products["category"][i]][self.df_products["id"][i]] = self.df_products["rating"][i]
 
         print("KYFYGKSUEFUYKUEmap_of_categories")
         print(self.map_of_categories)
@@ -68,14 +64,16 @@ class BestProductsAlgorithm:
         for i in self.map_of_categories.items():
             temp1 = sorted(i[1].items(), key=lambda x: x[1], reverse=True)
             temp2 = []
-            for j in range(2):
+            for j in range(4):
                 temp2.append(temp1[j][0])
             self.final_map[i[0]] = temp2
         print("final_map")
         print(self.final_map)
-        return list(self.final_map)
+        # return list(self.final_map)
+        return self.final_map
 
     def do_best_product_algorithm(self):
         self.get_product_to_categories()
-        self.sort_and_get_final()
+        result = self.sort_and_get_final()
+        return result
 
