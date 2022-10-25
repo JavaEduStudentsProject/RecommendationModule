@@ -75,6 +75,5 @@ class BestProductsAlgorithm:
     def do_best_product_algorithm(self):
         self.get_product_to_categories()
         result = self.sort_and_get_final()
-
         return result
 
