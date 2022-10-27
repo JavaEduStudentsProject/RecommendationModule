@@ -285,8 +285,6 @@ def sync_basket_kafka_consumer():
 
         else:
             print("msg.value(): from basket in sync method")
-            print(msg.topic())
-            print(msg.partition())
             print(msg.value())
     finally:
         c.close()
