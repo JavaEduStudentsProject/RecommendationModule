@@ -62,6 +62,7 @@ class BestProductsAlgorithm:
             self.final_map[i[0]] = temp2
         print("final_map")
         print(self.final_map)
+        print(type(self.final_map))
         return self.final_map
 
     def do_best_product_algorithm(self):

@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from BestProductAlgorithm import BestProductsAlgorithm
 
 
@@ -27,11 +27,13 @@ class BasketCategoriesAlgorithm:
             data = json.load(f)
             data = json_normalize(data)
             return pd.DataFrame(data)
+
     def data_frame_customers(self):
         with open("customer.txt", "r", encoding='utf-8') as f:
             data = json.load(f)
             data = json_normalize(data)
             return pd.DataFrame(data)
+
     def data_frame_orders(self):
         with open("orders.txt", "r", encoding='utf-8') as f:
             data = json.load(f)
