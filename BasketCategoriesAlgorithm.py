@@ -5,11 +5,17 @@ from BestProductAlgorithm import BestProductsAlgorithm
 
 
 class BasketCategoriesAlgorithm:
-    def __init__(self):
+    def __init__(self, products, orders, customers):
 
-        self.df_products = self.data_frame_products()
-        self.df_customers = self.data_frame_customers()
-        self.df_orders = self.data_frame_orders()
+        self.df_products = self.set_products(products)
+        print("products")
+        print(self.df_products)
+        self.df_orders = self.set_orders(orders)
+        print("orders")
+        print(self.df_orders)
+        self.df_customers = customers
+        print("customers")
+        print(self.df_customers)
 
         self.arr_of_order_combinations = []
         self.product_to_categories = {}
@@ -20,36 +26,46 @@ class BasketCategoriesAlgorithm:
         self.arr_recommendations_for_user = []
         self.arr_recommendations_for_user_id = []
 
-        self.arr_of_customer = []
+    def parsing(self, raw_str):
+        raw_str = raw_str.replace("{\'", "{\"")
+        raw_str = raw_str.replace(" \'", " \"")
+        raw_str = raw_str.replace("\':", "\":")
+        raw_str = raw_str.replace("\',", "\",")
+        raw_str = raw_str.replace("},  ,", "},")
+        raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
+        raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
+        raw_str = raw_str.replace("    },    ", " ,")
+        return raw_str
 
-    def data_frame_products(self):
-        with open("products.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    def parsing_orders(self, raw_str):
+        raw_str = raw_str.replace("\'", "\"")
+        return raw_str
 
-    def data_frame_customers(self):
-        with open("customer.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    def set_products(self, products):
+        raw_str = eval(products)
+        raw_products = self.parsing(raw_str)
+        print("Danil product")
+        print(raw_products)
+        data = json.loads(raw_products)
+        print("Final DFProducts")
+        print(json_normalize(data))
+        return pd.DataFrame(json_normalize(data))
 
-    def data_frame_orders(self):
-        with open("orders.txt", "r", encoding='utf-8') as f:
-            data = json.load(f)
-            data = json_normalize(data)
-            return pd.DataFrame(data)
+    def set_orders(self, orders):
+        raw_str = eval(orders)
+        print("Danil order")
+        print(raw_str)
+        raw_orders = self.parsing_orders(raw_str)
+        print("Danil raw_orders")
+        print(raw_orders)
+        data = json.loads(raw_orders)
+        return pd.DataFrame(json_normalize(data))
 
-    def get_products_from_customer(self) -> None:
-        """
-        Список заказов пользователей
-        :return: None
-        """
-        for i in self.df_customers["products"][0]:
-            self.arr_of_customer.append(i["id"])
-
-        print("arr_of_customer:")
-        print(self.arr_of_customer)
+    # def data_frame_orders(self):
+    #     with open("orders.txt", "r", encoding='utf-8') as f:
+    #         data = json.load(f)
+    #         data = json_normalize(data)
+    #         return pd.DataFrame(data)
 
     def get_arr_of_order_combinations(self) -> None:
         """
@@ -65,8 +81,8 @@ class BasketCategoriesAlgorithm:
                 for m in temp1:
                     if m != n:
                         self.arr_of_order_combinations.append([n, m])
-        print("pairs_from_orders:")
-        print(self.arr_of_order_combinations)
+        # print("pairs_from_orders:")
+        # print(self.arr_of_order_combinations)
 
     def get_product_to_categories(self) -> None:
         """
@@ -84,8 +100,8 @@ class BasketCategoriesAlgorithm:
             else:
                 self.product_to_categories[i[0]][self.df_products["category"][i[1] - 1]] = 1
 
-        print("product_to_categories")
-        print(self.product_to_categories)
+        # print("product_to_categories")
+        # print(self.product_to_categories)
 
     def get_possible_combinations(self) -> None:
         """
@@ -96,8 +112,8 @@ class BasketCategoriesAlgorithm:
         for i in self.product_to_categories.items():
             for j in i[1].items():
                 self.possible_combinations.append([i[0], j[0]])
-        print("possible_combinations:")
-        print(self.possible_combinations)
+        # print("possible_combinations:")
+        # print(self.possible_combinations)
 
     def get_appearance_from_orders_separated(self) -> None:
         """
@@ -112,8 +128,8 @@ class BasketCategoriesAlgorithm:
                 temp1.append(j["id"])
             self.arr_of_appearance_from_orders.append(temp1)
 
-        print("arr_of_appearance_from_orders:")
-        print(self.arr_of_appearance_from_orders)
+        # print("arr_of_appearance_from_orders:")
+        # print(self.arr_of_appearance_from_orders)
 
     def use_formula(self) -> None:
         """
@@ -137,8 +153,8 @@ class BasketCategoriesAlgorithm:
             value = self.product_to_categories[i[0]][i[1]] /(0.1 + temp_cleared_id.count(i[0]) + temp_cleared_category.count(i[1]))
             self.formula_result.append([i, value])
 
-        print("formula_result")
-        print(self.formula_result)
+        # print("formula_result")
+        # print(self.formula_result)
 
     def finalization(self) -> None:
         """
@@ -156,8 +172,8 @@ class BasketCategoriesAlgorithm:
 
         print("final_map:")
         print(self.final_map)
-        print("sorted_map")
-        print(sorted(self.final_map.items()))
+        # print("sorted_map")
+        # print(sorted(self.final_map.items()))
 
     def get_recommendations_for_user(self, basket: list) -> list:
         """
@@ -180,8 +196,7 @@ class BasketCategoriesAlgorithm:
         self.get_appearance_from_orders_separated()
         self.use_formula()
         self.finalization()
-        self.get_products_from_customer()
-        result_1 = self.get_recommendations_for_user(self.arr_of_customer)
+        result_1 = self.get_recommendations_for_user(self.df_customers)
         print("res1")
         print(result_1)
         bp = BestProductsAlgorithm()

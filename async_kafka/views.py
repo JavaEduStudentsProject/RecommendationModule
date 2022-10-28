@@ -186,8 +186,6 @@ async def consume_products_data():
             bp = BestProductsAlgorithm(data)
             best_product_data = str(bp.do_best_product_algorithm())
             best_product_data = best_product_data.replace("\'", "\"")
-            print("ЖЪЪЖЪЖЖЪЖЪ")
-            print(best_product_data)
 
             await send_best_products(best_product_data)
             await asyncio.sleep(0.1)
@@ -236,15 +234,19 @@ async def consume_data_for_basket_recommendation():
             if raw_data is not None:
                 data_from_front = eval(raw_data)
             print(f"data_from_front: {data_from_front}")
-            print(f"data_from_kafka: {data_from_kafka}")
+            print(f"data_from_kafka:")
+            print(data_from_kafka)
             count += 1
             if count % 2 != 0:
                 print("test 2")
             else:
                 print("test 8")
                 print(f"data_from_front: {data_from_front}")
-                # bs = BasketCategoriesAlgorithm(data_from_kafka[0], data_from_kafka[1], data_from_front)
-                bs = BasketCategoriesAlgorithm()
+                # print("ПРОДУКТЫ НА ВХОД МЕТОДА")
+                # print(data_from_kafka[0])
+                # print("ЗАКАЗЫ НА ВХОД МЕТОДА")
+                # print(data_from_kafka[1])
+                bs = BasketCategoriesAlgorithm(data_from_kafka[0], data_from_kafka[1], data_from_front)
                 basket_categories_data = str(bs.do_basket_categories_algorithm())
                 # print(f"final data_from_kafka: {data_from_kafka}")  # products and orders lists
                 # print(f"final data_from_front: {data_from_front}")  # array with product ids from basket

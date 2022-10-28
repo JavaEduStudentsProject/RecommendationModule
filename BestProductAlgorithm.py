@@ -24,17 +24,9 @@ class BestProductsAlgorithm:
         return raw_str
 
     def set_products(self, products):
-        print("DANIL STAFF")
         raw_str = eval(products)
-        print("Danil raw_str")
-        print(raw_str)
         raw_products = self.parsing(raw_str)
-        print("Danil raw_products" + raw_products)
-        print(type(raw_products))
-
         data = json.loads(raw_products)
-        print("Final DF")
-        print(json_normalize(data))
         return pd.DataFrame(json_normalize(data))
 
     def get_product_to_categories(self):
@@ -60,9 +52,9 @@ class BestProductsAlgorithm:
             for j in range(4):
                 temp2.append(temp1[j][0])
             self.final_map[i[0]] = temp2
-        print("final_map")
-        print(self.final_map)
-        print(type(self.final_map))
+        # print("final_map")
+        # print(self.final_map)
+        # print(type(self.final_map))
         return self.final_map
 
     def do_best_product_algorithm(self):
