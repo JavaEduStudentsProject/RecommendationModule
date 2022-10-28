@@ -42,6 +42,7 @@ class BasketCategoriesAlgorithm:
     def parsing_orders(self, raw_str):
         raw_str = raw_str.replace("\'", "\"")
         raw_str = raw_str.replace("n\"s", "n\'s")
+        raw_str = raw_str.replace("L\"O", "L\'O")
         raw_str = raw_str.replace("},  ,", "},")
         return raw_str
 
