@@ -234,8 +234,8 @@ async def consume_data_for_basket_recommendation():
             if raw_data is not None:
                 data_from_front = eval(raw_data)
             print(f"data_from_front: {data_from_front}")
-            print(f"data_from_kafka:")
-            print(data_from_kafka)
+            # print(f"data_from_kafka:")
+            # print(data_from_kafka)
             count += 1
             if count % 2 != 0:
                 print("test 2")
