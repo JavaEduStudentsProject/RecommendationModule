@@ -15,8 +15,9 @@ class BestProductsAlgorithm:
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
+        raw_str = raw_str.replace("\'},", "\"},")
+        raw_str = raw_str.replace("\'}]", "\"}]")
         raw_str = raw_str.replace("},  ,", "},")
-
         raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
@@ -40,6 +41,8 @@ class BestProductsAlgorithm:
                 self.map_of_categories[self.df_products["category"][i]] = dict([])
 
             self.map_of_categories[self.df_products["category"][i]][self.df_products["id"][i]] = self.df_products["rating"][i]
+        print("map_of_categories")
+        print(self.map_of_categories)
 
     def sort_and_get_final(self):
         """
@@ -52,9 +55,9 @@ class BestProductsAlgorithm:
             for j in range(4):
                 temp2.append(temp1[j][0])
             self.final_map[i[0]] = temp2
-        # print("final_map")
-        # print(self.final_map)
-        # print(type(self.final_map))
+        print("final_map")
+        print(self.final_map)
+        print(type(self.final_map))
         return self.final_map
 
     def do_best_product_algorithm(self):

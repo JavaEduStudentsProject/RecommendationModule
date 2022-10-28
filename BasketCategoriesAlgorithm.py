@@ -37,6 +37,7 @@ class BasketCategoriesAlgorithm:
         raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")
         raw_str = raw_str.replace("    },    ", " ,")
+
         return raw_str
 
 
@@ -67,12 +68,6 @@ class BasketCategoriesAlgorithm:
         data = json.loads(raw_orders)
         return pd.DataFrame(json_normalize(data))
 
-    # def data_frame_orders(self):
-    #     with open("orders.txt", "r", encoding='utf-8') as f:
-    #         data = json.load(f)
-    #         data = json_normalize(data)
-    #         return pd.DataFrame(data)
-
     def get_arr_of_order_combinations(self) -> None:
         """
         Получаю все возможные комбинции из заказов причем двусторонние, т.е. [59, 88] и [88, 59] для удобной фильтрации
@@ -87,8 +82,8 @@ class BasketCategoriesAlgorithm:
                 for m in temp1:
                     if m != n:
                         self.arr_of_order_combinations.append([n, m])
-        # print("pairs_from_orders:")
-        # print(self.arr_of_order_combinations)
+        print("pairs_from_orders:")
+        print(self.arr_of_order_combinations)
 
     def get_product_to_categories(self) -> None:
         """
@@ -96,6 +91,7 @@ class BasketCategoriesAlgorithm:
         этой категории
         :return: None
         """
+        print(self.df_products["category"])
         for i in self.arr_of_order_combinations:
 
             if not i[0] in self.product_to_categories:
@@ -106,8 +102,8 @@ class BasketCategoriesAlgorithm:
             else:
                 self.product_to_categories[i[0]][self.df_products["category"][i[1] - 1]] = 1
 
-        # print("product_to_categories")
-        # print(self.product_to_categories)
+        print("product_to_categories")
+        print(self.product_to_categories)
 
     def get_possible_combinations(self) -> None:
         """
@@ -118,8 +114,8 @@ class BasketCategoriesAlgorithm:
         for i in self.product_to_categories.items():
             for j in i[1].items():
                 self.possible_combinations.append([i[0], j[0]])
-        # print("possible_combinations:")
-        # print(self.possible_combinations)
+        print("possible_combinations:")
+        print(self.possible_combinations)
 
     def get_appearance_from_orders_separated(self) -> None:
         """
@@ -134,8 +130,8 @@ class BasketCategoriesAlgorithm:
                 temp1.append(j["id"])
             self.arr_of_appearance_from_orders.append(temp1)
 
-        # print("arr_of_appearance_from_orders:")
-        # print(self.arr_of_appearance_from_orders)
+        print("arr_of_appearance_from_orders:")
+        print(self.arr_of_appearance_from_orders)
 
     def use_formula(self) -> None:
         """
@@ -159,8 +155,8 @@ class BasketCategoriesAlgorithm:
             value = self.product_to_categories[i[0]][i[1]] /(0.1 + temp_cleared_id.count(i[0]) + temp_cleared_category.count(i[1]))
             self.formula_result.append([i, value])
 
-        # print("formula_result")
-        # print(self.formula_result)
+        print("formula_result")
+        print(self.formula_result)
 
     def finalization(self) -> None:
         """
@@ -178,8 +174,8 @@ class BasketCategoriesAlgorithm:
 
         print("final_map:")
         print(self.final_map)
-        # print("sorted_map")
-        # print(sorted(self.final_map.items()))
+        print("sorted_map")
+        print(sorted(self.final_map.items()))
 
     def get_recommendations_for_user(self, basket: list) -> list:
         """
