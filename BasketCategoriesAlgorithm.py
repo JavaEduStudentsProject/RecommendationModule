@@ -32,6 +32,7 @@ class BasketCategoriesAlgorithm:
         raw_str = raw_str.replace("\':", "\":")
         raw_str = raw_str.replace("\',", "\",")
         raw_str = raw_str.replace("\'},", "\"},")
+        raw_str = raw_str.replace("\'}]", "\"}]")
         raw_str = raw_str.replace("},  ,", "},")
         raw_str = raw_str.replace("  \"non_filter_features\": {", " ")
         raw_str = raw_str.replace("  },    \"filter_features\": { ", ",")

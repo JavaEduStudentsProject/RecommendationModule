@@ -263,7 +263,7 @@ def sync_basket_kafka_consumer():
     consumer_conf = {
         'bootstrap.servers': "localhost:9092",
         'group.id': "syncBasketConsumerGroup",
-        'auto.offset.reset': "latest"
+        'auto.offset.reset': "earliest"
     }
     c = Consumer(consumer_conf)
 
