@@ -224,7 +224,7 @@ async def consume_data_for_basket_recommendation():
         bootstrap_servers='localhost:9092',
         group_id="requestForBasketRecommend")
     await consumer.start()
-    data_from_front = None;
+
     try:
         async for msg in consumer:
             # print("consumed for basket (products, orders): ", msg.value.decode('UTF-8'))
