@@ -13,7 +13,7 @@ class BasketCategoriesAlgorithm:
         self.df_orders = self.set_orders(orders)
         print("orders")
         print(self.df_orders)
-        self.df_customers = customers
+        self.df_customers = self.set_customers(customers)
         print("customers")
         print(self.df_customers)
 
@@ -26,7 +26,7 @@ class BasketCategoriesAlgorithm:
         self.arr_recommendations_for_user = []
         self.arr_recommendations_for_user_id = []
 
-    def parsing(self, raw_str):
+    def parsing_products(self, raw_str):
         raw_str = raw_str.replace("{\'", "{\"")
         raw_str = raw_str.replace(" \'", " \"")
         raw_str = raw_str.replace("\':", "\":")
@@ -40,17 +40,13 @@ class BasketCategoriesAlgorithm:
 
         return raw_str
 
-
     def parsing_orders(self, raw_str):
-        raw_str = raw_str.replace("\'", "\"")
-        raw_str = raw_str.replace("n\"s", "n\'s")
-        raw_str = raw_str.replace("L\"O", "L\'O")
         raw_str = raw_str.replace("},  ,", "},")
         return raw_str
 
     def set_products(self, products):
         raw_str = eval(products)
-        raw_products = self.parsing(raw_str)
+        raw_products = self.parsing_products(raw_str)
         print("Danil product")
         print(raw_products)
         data = json.loads(raw_products)
@@ -67,6 +63,11 @@ class BasketCategoriesAlgorithm:
         print(raw_orders)
         data = json.loads(raw_orders)
         return pd.DataFrame(json_normalize(data))
+
+    def set_customers(self, customers):
+        str_to_parse = customers
+        return list(map(int, str_to_parse.split(",")))
+
 
     def get_arr_of_order_combinations(self) -> None:
         """
@@ -91,7 +92,6 @@ class BasketCategoriesAlgorithm:
         этой категории
         :return: None
         """
-        print(self.df_products["category"])
         for i in self.arr_of_order_combinations:
 
             if not i[0] in self.product_to_categories:
@@ -172,10 +172,10 @@ class BasketCategoriesAlgorithm:
                             temp_array = j
             self.final_map[temp_array[0][0]] = temp_array[0][1]
 
-        print("final_map:")
+        print("final_map_basket:")
         print(self.final_map)
-        print("sorted_map")
-        print(sorted(self.final_map.items()))
+        # print("sorted_map")
+        # print(sorted(self.final_map.items()))
 
     def get_recommendations_for_user(self, basket: list) -> list:
         """
@@ -183,11 +183,27 @@ class BasketCategoriesAlgorithm:
         :param basket: list of product id in the basket:
         :return: arr of categories
         """
+        print("Злоебучие заказы с фронта")
+        print(basket)
         for i in basket:
             self.arr_recommendations_for_user.append(self.final_map.get(i))
         return self.arr_recommendations_for_user
 
-    def do_basket_categories_algorithm(self):
+
+
+    def unique(self, arr):
+        """
+        Method for making arr of unique categories for the last methods
+        :param arr: arr of categories for customer
+        :return: arr of unique categories for customer
+        """
+        output = []
+        for x in arr:
+            if x not in output:
+                output.append(x)
+        return output
+
+    def do_basket_categories_algorithm(self, products):
         """
         Последовательное применение всех методов и получение рекоммендаций
         :return: list of products id
@@ -201,10 +217,19 @@ class BasketCategoriesAlgorithm:
         result_1 = self.get_recommendations_for_user(self.df_customers)
         print("res1")
         print(result_1)
-        bp = BestProductsAlgorithm()
+        # Избавляемся от Null
+        result_1 = [i for i in result_1 if i is not None]
+        # Избавляемся от одинаковых категорий в списке
+        result_1 = self.unique(result_1);
+        print("res1")
+        print(result_1)
+        bp = BestProductsAlgorithm(products)
         result_2 = bp.do_best_product_algorithm()
         print("res2")
         print(result_2)
         for i in result_1:
-            self.arr_recommendations_for_user_id.append(result_2[i][0])
-        return set(self.arr_recommendations_for_user_id)
+            for j in result_2[i]:
+                self.arr_recommendations_for_user_id.append(j)
+        print("Spesial for you")
+        print(self.arr_recommendations_for_user_id)
+        return self.arr_recommendations_for_user_id
