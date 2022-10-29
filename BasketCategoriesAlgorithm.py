@@ -183,7 +183,7 @@ class BasketCategoriesAlgorithm:
         :param basket: list of product id in the basket:
         :return: arr of categories
         """
-        print("Злоебучие заказы с фронта")
+        print("Заказы с фронта")
         print(basket)
         for i in basket:
             self.arr_recommendations_for_user.append(self.final_map.get(i))
@@ -232,4 +232,4 @@ class BasketCategoriesAlgorithm:
                 self.arr_recommendations_for_user_id.append(j)
         print("Spesial for you")
         print(self.arr_recommendations_for_user_id)
-        return self.arr_recommendations_for_user_id
+        return sorted(self.arr_recommendations_for_user_id)

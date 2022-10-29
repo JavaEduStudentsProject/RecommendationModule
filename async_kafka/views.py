@@ -242,16 +242,9 @@ async def consume_data_for_basket_recommendation():
             else:
                 print("test 8")
                 print(f"data_from_front: {data_from_front}")
-                # print("ПРОДУКТЫ НА ВХОД МЕТОДА")
-                # print(data_from_kafka[0])
-                # print("ЗАКАЗЫ НА ВХОД МЕТОДА")
-                # print(data_from_kafka[1])
                 bs = BasketCategoriesAlgorithm(data_from_kafka[0], data_from_kafka[1], data_from_front)
                 basket_categories_data = str(bs.do_basket_categories_algorithm(data_from_kafka[0]))
-                # print(f"final data_from_kafka: {data_from_kafka}")  # products and orders lists
-                # print(f"final data_from_front: {data_from_front}")  # array with product ids from basket
                 await send_basket_category(basket_categories_data)
-
 
         await asyncio.sleep(0.1)
     finally:
