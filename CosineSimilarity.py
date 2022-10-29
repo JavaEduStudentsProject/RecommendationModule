@@ -1,6 +1,8 @@
 import json
 import math
 import copy
+from typing import Optional
+
 import numpy as np
 from numpy import ndarray, float64
 
@@ -12,23 +14,28 @@ class CosineSimilarity:
         self.data = data
         self.current_user_id = self.define_current_user_id()
 
-
         self.orders_from_all_users = self.orders_dict_creating()
         self.orders_from_all_users_except_current_user = self.set_orders_from_all_users_except_current_user()
 
     def define_current_user_id(self):
+        userId = None
         for order in self.orders_list_regex():
             if order['username'] == self.current_user_username:
                 return str(order['userId'])
+
+        return userId
 
     def orders_list_regex(self):
         str_orders = eval(self.data)
         str_orders = str_orders.replace("{\'", "{\"")
         str_orders = str_orders.replace(" \'", " \"")
+        str_orders = str_orders.replace(",\'", ",\"")
         str_orders = str_orders.replace("\':", "\":")
         str_orders = str_orders.replace("\',", "\",")
         str_orders = str_orders.replace("\'},", "\"},")
         str_orders = str_orders.replace("\'}]", "\"}]")
+        print("str_orders")
+        print(str_orders)
         orders = json.loads(str_orders)
         print("orders in 33 string:")
         print(orders)
@@ -92,10 +99,13 @@ class CosineSimilarity:
         Sets dictionary of all users except current user
         :return: dict of users with dicts of their product ratings
         """
-        dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
-        dict_without_current_user.pop(self.current_user_id)
+        if self.current_user_id is None:
+            self.define_recommended_product()
+        else:
+            dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
+            dict_without_current_user.pop(self.current_user_id)
         # todo delete:
-        return dict_without_current_user
+            return dict_without_current_user
 
     @staticmethod
     def dist_cosine(vector_one: dict, vector_two: dict) -> float:
@@ -224,12 +234,15 @@ class CosineSimilarity:
         for i in range(len(matrix)):
             print(f"{user_list[i]:<5}: {matrix[i]}")
 
-    def define_recommended_product(self) -> list:
+    def define_recommended_product(self) -> Optional[list]:
         """
         Defines the product with the most weight and its number
         # :param weight_list: list of final weights for each product
         :return: recommendation
         """
+        if self.current_user_id is None:
+            return None
+
         final_weight_dict = {key:value for key, value in self.get_final_weight_for_each_product(self.matrix_filling()).items()
                              if f"{value}" != f"{np.NAN}"}
         sorted_weight_dict = dict(sorted(final_weight_dict.items(), key=lambda x: x[1], reverse=True)[:5])

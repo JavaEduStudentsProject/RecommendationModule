@@ -36,7 +36,7 @@ def request_on_orders_data():
 
 
 def save_orders():
-    with open("new_orders_with_usernames.txt", "r", encoding='utf-8-sig') as f:
+    with open("new_orders_with_usernames_without_ids.txt", "r", encoding='utf-8-sig') as f:
         raw_data = f.read()
 
     producer.produce("frontSaveOrders", key="7", value=raw_data.encode('utf-8'))
@@ -87,5 +87,5 @@ if __name__ == '__main__':
     # send()
     # request_on_orders_data()
     # get_orders_data()
-    # save_orders()
-    save_products()
+    save_orders()
+    # save_products()
