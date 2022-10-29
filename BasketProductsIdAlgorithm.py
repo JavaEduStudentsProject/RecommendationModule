@@ -24,7 +24,7 @@ class BasketProductsIdAlgorithm:
             return pd.DataFrame(data)
 
     def data_frame_customers(self):
-        with open("customer.txt", "r", encoding='utf-8') as f:
+        with open("customer.txt.txt", "r", encoding='utf-8') as f:
             data = json.load(f)
             data = json_normalize(data)
             return pd.DataFrame(data)
