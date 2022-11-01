@@ -36,7 +36,7 @@ def request_on_orders_data():
 
 
 def save_orders():
-    with open("new_orders_with_usernames_without_ids.txt", "r", encoding='utf-8-sig') as f:
+    with open("files/new_orders_with_usernames_without_ids.txt", "r", encoding='utf-8-sig') as f:
         raw_data = f.read()
 
     producer.produce("frontSaveOrders", key="7", value=raw_data.encode('utf-8'))
@@ -46,7 +46,7 @@ def save_orders():
 
 def save_products():
     # with open("products.txt", "r", encoding='utf-8-sig') as f:
-    with open("new_products.txt", "r", encoding='utf-8-sig') as f:
+    with open("files/new_products.txt", "r", encoding='utf-8-sig') as f:
         data = str(json.load(f))
         print(data)
         print(type(data))

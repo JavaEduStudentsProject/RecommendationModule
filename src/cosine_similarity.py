@@ -37,22 +37,18 @@ class CosineSimilarity:
         print("str_orders")
         print(str_orders)
         orders = json.loads(str_orders)
-        print("orders in 33 string:")
-        print(orders)
+
         return orders
 
     def orders_dict_creating(self) -> dict:
         """
-        Creating of dictionary with users and products, they have bought.
+        Creating of dictionary with users and products they have bought.
         :return: dictionary with users and sorted list of products, they have bought {user: [1, 2, 34, 56, 88]}
         """
         orders = self.orders_list_regex()
         orders_dict = {}
         all_orders_quantity = len(orders)
         for order in orders:
-            # print("order in 45 str")
-            # print(order)
-            # print(order["userId"])
             if f"{order['userId']}" in orders_dict:
                 for product in order['products']:
                     if product['id'] in orders_dict[f"{order['userId']}"].keys():
@@ -78,21 +74,8 @@ class CosineSimilarity:
             for product_id, coeff_list in products.items():
                 final_orders_dict[user][product_id] = coeff_list[0] * (coeff_list[1] / all_orders_quantity)
 
-        # self.anomaly_deleting(orders_dict)
-
         print(f"final_orders_dict: {final_orders_dict}")
         return final_orders_dict
-
-    def anomaly_deleting(self, orders_dict: dict) -> None:
-        """
-        Deletes those users' rating sets, which are likely to be strange - all rates are similar
-        :param ratings: Dict of all users with their rating sets
-        :return: None
-        """
-        temp_rating_set = copy.deepcopy(orders_dict)
-        for user, rates in temp_rating_set.items():
-            if len(list(rates.values())) > 5 and sum(list(rates.values())) / len(list(rates.values())) == list(rates.values())[0]:
-                orders_dict.pop(user)
 
     def set_orders_from_all_users_except_current_user(self) -> dict:
         """
@@ -104,7 +87,6 @@ class CosineSimilarity:
         else:
             dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
             dict_without_current_user.pop(self.current_user_id)
-        # todo delete:
             return dict_without_current_user
 
     @staticmethod
@@ -140,14 +122,17 @@ class CosineSimilarity:
 
         return result
 
-    def get_product_id_list(self):
+    def get_product_id_list(self) -> list:
+        """
+        Creating list of products bought by all users except current user
+        :return: list of product ids
+        """
         comparison = self.user_rating_comparison()
         product_id_list = []
-        for user in list(comparison.keys()):
-            product_id_list.extend(list(self.orders_from_all_users_except_current_user[user].keys()))
+        for user_id in list(comparison.keys()):
+            product_id_list.extend(list(self.orders_from_all_users_except_current_user[user_id].keys()))
         product_id_list = sorted(set(product_id_list))
-        print("product_id_list: (139)")
-        print(product_id_list)
+
         return product_id_list
 
     def empty_matrix_creating(self):
@@ -159,15 +144,10 @@ class CosineSimilarity:
         comparison = self.user_rating_comparison()
         print(f"comparison: {comparison}")
 
-
         product_id_list = self.get_product_id_list()
         print(product_id_list)
         print(len(product_id_list))
         matrix = np.zeros((11, len(product_id_list) + 1))
-
-        # list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
-        #
-        # list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
 
         user_id_list = [int(x) for x in list(comparison.keys())]
         print(user_id_list)
@@ -185,16 +165,14 @@ class CosineSimilarity:
         comparison = self.user_rating_comparison()
         matrix = self.empty_matrix_creating()
 
-        user_list = list(comparison.keys())
-
         for i, user_id in enumerate(list(matrix[1:, 0])):
-            # product_id_list = list(map(lambda x: x.keys()[0], list(self.orders_from_all_users_except_current_user.values())[user_list[i]]))
             for j, product_id in enumerate(list(matrix[0, 1:])):
                 if int(product_id) in self.orders_from_all_users[self.current_user_id].keys():
                     matrix[i + 1, j + 1] = np.NAN
                 else:
                     if int(product_id) in list(self.orders_from_all_users_except_current_user[f"{int(user_id)}"].keys()):
-                        matrix[i + 1, j + 1] = self.orders_from_all_users_except_current_user[f"{int(user_id)}"][int(product_id)] * 100 * comparison[f"{int(user_id)}"]
+                        matrix[i + 1, j + 1] = self.orders_from_all_users_except_current_user[f"{int(user_id)}"][int(product_id)] \
+                                               * 100 * comparison[f"{int(user_id)}"]
 
         return matrix
 
@@ -204,7 +182,6 @@ class CosineSimilarity:
         :return: list of sums
         """
         matrix = self.matrix_filling()
-
         sum_ = matrix[1:, 1:].sum(axis=0)
 
         return sum_
@@ -225,15 +202,6 @@ class CosineSimilarity:
         print(f"final_weight_dict: {final_weight_dict}")
         return final_weight_dict
 
-    def print_user_table(self, matrix: list) -> None:
-        """
-        Printing table with users and there ratings for each product, multiplied by cosine similarity
-        :return: None
-        """
-        user_list = list(self.orders_from_all_users_except_current_user.keys())
-        for i in range(len(matrix)):
-            print(f"{user_list[i]:<5}: {matrix[i]}")
-
     def define_recommended_product(self) -> Optional[list]:
         """
         Defines the product with the most weight and its number
@@ -249,11 +217,3 @@ class CosineSimilarity:
         print(f"sorted_weight_dict: {sorted_weight_dict}")
         print(f"Dict of 5 recommended products: {sorted_weight_dict}")
         return list(sorted_weight_dict.keys())
-
-    @staticmethod
-    def print_sum_for_each_product(sum_list: list) -> None:
-        """
-        Printing sums of rating multiplied by cosine similarity for each product
-        :return: None
-        """
-        print(f"sum: {sum_list:<5}")

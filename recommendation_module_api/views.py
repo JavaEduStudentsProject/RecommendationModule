@@ -1,13 +1,7 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpRequest, JsonResponse
-from django.views import View
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.request import Request
-from rest_framework.response import Response
+from django.http import HttpResponse, JsonResponse
 import requests
 import time
-from CosineSimilarity import CosineSimilarity
+from src.cosine_similarity import CosineSimilarity
 
 
 def index(request):
@@ -41,10 +35,11 @@ def request_to_database():
     return data_from_database.text
 
 
-
-
-#зацикленный запрос к базе, запускается в отдельном потоке
-def loop_func():
+def loop_func() -> None:
+    """
+    Зацикленный запрос к базе, запускается в отдельном потоке
+    :return: None
+    """
     count = 0
     while True:
         request_to_database()
@@ -53,33 +48,3 @@ def loop_func():
         if count == 100:
             print("Loop stopped")
             break
-
-    # return Response(id, status=status.HTTP_200_OK)
-    # return Response(render, id, status=status.HTTP_201_CREATED)
-
-    # comment = Comment(todonote_id=data["todonote"], message=data["message"], author=request.user)
-    # # comment.save(force_insert=True)
-    # # return Response(serializers.serialize_comment_created(comment), status=status.HTTP_201_CREATED)
-    # if comment.todonote.public:
-    #     comment.save(force_insert=True)
-    #     return Response(serializers.serialize_comment_created(comment), status=status.HTTP_201_CREATED)
-    # else:
-    #     return Response("Запись не публичная")
-
-# serializer = serializers.NoteSerializer(data=request.data)
-#
-#        if not serializer.is_valid():
-#            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#        serializer.save(author=request.user)
-#        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# class IndexView(View):
-#     def get(self, request: HttpRequest) -> HttpResponse:
-#         params = {
-#             "user": request.user,
-#             "test_param": "this is test param"
-#             # "server_version": settings_local.SERVER_VERSION,
-#         }
-#         return render(request, "recommendation_module/about.html", params)
