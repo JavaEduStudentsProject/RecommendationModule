@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 from pandas import json_normalize
-from best_product_algorithm import BestProductsAlgorithm
+from src.best_product_algorithm import BestProductsAlgorithm
 
 
 class BasketCategoriesAlgorithm:
