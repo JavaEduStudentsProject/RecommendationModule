@@ -104,7 +104,6 @@ class CosineSimilarity:
         else:
             dict_without_current_user = copy.deepcopy(self.orders_from_all_users)
             dict_without_current_user.pop(self.current_user_id)
-        # todo delete:
             return dict_without_current_user
 
     @staticmethod

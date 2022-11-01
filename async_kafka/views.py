@@ -4,9 +4,9 @@ from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from confluent_kafka import Consumer, KafkaException, KafkaError
 import asyncio
 
-from CosineSimilarity import CosineSimilarity
-from BasketCategoriesAlgorithm import BasketCategoriesAlgorithm
-from BestProductAlgorithm import BestProductsAlgorithm
+from src.cosine_similarity import CosineSimilarity
+from src.basket_categories_algorithm import BasketCategoriesAlgorithm
+from src.best_product_algorithm import BestProductsAlgorithm
 
 
 async def send_request_for_orders_data():
@@ -88,7 +88,6 @@ async def consume_request_for_user():
 
 
 async def consume_orders_data():
-    # sync_kafka_consumer()
     print("consume_orders_data runs")
     consumer = AIOKafkaConsumer(
         'sendOrdersDataToRecommendationModule',
@@ -117,8 +116,6 @@ async def consume_orders_data():
                     raise KafkaException(msg.error())
                 else:
                     print("msg.value():")
-                    print(msg.topic())
-                    print(msg.partition())
                     print(msg.value())
                     data = data_from_kafka
                     print(f"username: {eval(msg.value().decode('utf-8'))}")
@@ -135,46 +132,11 @@ async def consume_orders_data():
         await consumer.stop()
 
 
-# def sync_kafka_consumer():
-#     consumer_conf = {
-#         'bootstrap.servers': "localhost:9092",
-#         'group.id': "syncKafkaConsumer",
-#         'auto.offset.reset': "earliest"
-#     }
-#     c = Consumer(consumer_conf)
-#
-#     try:
-#         c.subscribe(["syncRequestForUser"])
-#
-#         while True:
-#             print("Trying to get username in sync_kafka_consumer from Kafka...")
-#             msg = c.poll(timeout=1.0)
-#             if msg is None: continue
-#
-#             if msg.error():
-#                 if msg.error().code() == KafkaError._PARTITION_EOF:
-#                     sys.stderr.write('%% %s [%d] reached end at offset %d\n' %
-#                                      (msg.topic(), msg.partition(), msg.offset()))
-#                     print('%% %s [%d] reached end at offset %d\n' %
-#                                      (msg.topic(), msg.partition(), msg.offset()))
-#                 elif msg.error():
-#                     raise KafkaException(msg.error())
-#
-#             else:
-#                 print("msg.value():")
-#                 print(msg.topic())
-#                 print(msg.partition())
-#                 print(msg.value())
-#     finally:
-#         c.close()
-
 async def consume_products_data():
     print("consume_products_data runs")
     consumer = AIOKafkaConsumer(
         'sendProductsDataToRecommendationModule',
         bootstrap_servers='localhost:9092',
-        # group_id="productsDataGroup",
-        # auto_offset_reset="latest")
         group_id="productsDataGroup")
     await consumer.start()
     try:
@@ -227,7 +189,6 @@ async def consume_data_for_basket_recommendation():
 
     try:
         async for msg in consumer:
-            # print("consumed for basket (products, orders): ", msg.value.decode('UTF-8'))
             data_from_kafka.append(msg.value.decode('UTF-8'))
 
             raw_data = sync_basket_kafka_consumer()
@@ -262,11 +223,8 @@ def sync_basket_kafka_consumer():
 
     try:
         c.subscribe(["syncRequestForUserBasket"])
-
-        # while True:
         print("Trying to get ids from basket in sync_basket_kafka_consumer from Kafka...")
         msg = c.poll(timeout=1.0)
-        # if msg is None: continue
         if msg is None:
             return
         if msg.error():
@@ -285,6 +243,7 @@ def sync_basket_kafka_consumer():
         c.close()
 
     return msg.value()
+
 
 async def main():
     await asyncio.gather(consume_request_for_user(), consume_orders_data(),
