@@ -78,21 +78,19 @@ class CosineSimilarity:
             for product_id, coeff_list in products.items():
                 final_orders_dict[user][product_id] = coeff_list[0] * (coeff_list[1] / all_orders_quantity)
 
-        # self.anomaly_deleting(orders_dict)
-
         print(f"final_orders_dict: {final_orders_dict}")
         return final_orders_dict
 
-    def anomaly_deleting(self, orders_dict: dict) -> None:
-        """
-        Deletes those users' rating sets, which are likely to be strange - all rates are similar
-        :param ratings: Dict of all users with their rating sets
-        :return: None
-        """
-        temp_rating_set = copy.deepcopy(orders_dict)
-        for user, rates in temp_rating_set.items():
-            if len(list(rates.values())) > 5 and sum(list(rates.values())) / len(list(rates.values())) == list(rates.values())[0]:
-                orders_dict.pop(user)
+    # def anomaly_deleting(self, orders_dict: dict) -> None:
+    #     """
+    #     Deletes those users' rating sets, which are likely to be strange - all rates are similar
+    #     :param ratings: Dict of all users with their rating sets
+    #     :return: None
+    #     """
+    #     temp_rating_set = copy.deepcopy(orders_dict)
+    #     for user, rates in temp_rating_set.items():
+    #         if len(list(rates.values())) > 5 and sum(list(rates.values())) / len(list(rates.values())) == list(rates.values())[0]:
+    #             orders_dict.pop(user)
 
     def set_orders_from_all_users_except_current_user(self) -> dict:
         """
@@ -158,15 +156,10 @@ class CosineSimilarity:
         comparison = self.user_rating_comparison()
         print(f"comparison: {comparison}")
 
-
         product_id_list = self.get_product_id_list()
         print(product_id_list)
         print(len(product_id_list))
         matrix = np.zeros((11, len(product_id_list) + 1))
-
-        # list_1 = [75, 76, 13, 30, 63, 83, 58, 26, 56, 1]
-        #
-        # list_2 = [2, 3, 7, 9, 11, 12, 14, 16, 21, 23, 24, 25, 29, 30, 32, 36, 37, 39, 45, 46, 47, 48, 53, 54, 59, 61, 64, 66, 68, 70, 75, 76, 80, 81, 83, 84, 88, 90, 91, 92, 93, 94, 96, 97, 99]
 
         user_id_list = [int(x) for x in list(comparison.keys())]
         print(user_id_list)
@@ -184,10 +177,7 @@ class CosineSimilarity:
         comparison = self.user_rating_comparison()
         matrix = self.empty_matrix_creating()
 
-        user_list = list(comparison.keys())
-
         for i, user_id in enumerate(list(matrix[1:, 0])):
-            # product_id_list = list(map(lambda x: x.keys()[0], list(self.orders_from_all_users_except_current_user.values())[user_list[i]]))
             for j, product_id in enumerate(list(matrix[0, 1:])):
                 if int(product_id) in self.orders_from_all_users[self.current_user_id].keys():
                     matrix[i + 1, j + 1] = np.NAN
@@ -203,7 +193,6 @@ class CosineSimilarity:
         :return: list of sums
         """
         matrix = self.matrix_filling()
-
         sum_ = matrix[1:, 1:].sum(axis=0)
 
         return sum_
